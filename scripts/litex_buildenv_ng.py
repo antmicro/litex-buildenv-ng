@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 import argh
+import configparser
+import config
 from prepare import prepare
 from gateware import gateware
 from firmware import firmware
 
-def prepare():
-    print("Hello")
+def init_config(args):
+    configuration = config.ConfigManager()
+    configuration.init(args.env, args.cpu, args.cpu_variant, args.platform, args.target, args.firmware)
 
 if __name__ == '__main__':
     parser = argh.ArghParser()
@@ -21,6 +24,5 @@ if __name__ == '__main__':
         gateware,
         firmware
     ])
-    parser.dispatch()
 
-
+    parser.dispatch(pre_call=init_config)
