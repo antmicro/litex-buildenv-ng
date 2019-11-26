@@ -225,4 +225,4 @@ PROMPT_COMMAND="litex_buildenv_prompt; ${PROMPT_COMMAND}"
 
 echo "Bootstrap finished, running litex_buildenv_ng..."
 
-python3 scripts/litex_buildenv_ng.py $@
+python3 scripts/litex_buildenv_ng.py $@ prepare
