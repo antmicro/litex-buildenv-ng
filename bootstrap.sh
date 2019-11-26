@@ -58,7 +58,7 @@ fi
 if [ -f /etc/udev/rules.d/99-hdmi2usb-permissions.rules -o -f /lib/udev/rules.d/99-hdmi2usb-permissions.rules -o -f /lib/udev/rules.d/60-hdmi2usb-udev.rules -o ! -z "$HDMI2USB_UDEV_IGNORE" ]; then
 	true
 else
-	echo "Please install the HDMI2USB udev rules, or `export HDMI2USB_UDEV_IGNORE=somevalue` to ignore this."
+	echo "Please install the HDMI2USB udev rules, or "export HDMI2USB_UDEV_IGNORE=somevalue" to ignore this."
 	echo "On Debian/Ubuntu, these can be installed by running scripts/debian-setup.sh"
 	echo
 	return 1
@@ -93,11 +93,10 @@ export PYTHONDONTWRITEBYTECODE=1
 # Only works with Python 3.8
 # export PYTHONPYCACHEPREFIX=$BUILD_DIR/conda/__pycache__
 
-if [ -z "$PATH_UPDATED_FOR_NG" ]
+if [ -z "$SHELL_IS_BUILDENV_READY" ]
 then
     # Install and setup conda for downloading packages
     export PATH=$CONDA_DIR/bin:$PATH:/sbin
-    export PATH_UPDATED_FOR_NG=1
 fi
 
 function fix_conda {
@@ -209,19 +208,23 @@ function check_version {
 check_version python ${PYTHON_VERSION} || return 1
 
 
-# Set prompt
-ORIG_PS1="$PS1"
-litex_buildenv_prompt() {
-	PS1="(LX) $ORIG_PS1"
-	case "$TERM" in
-	xterm*|rxvt*)
-		PS1="$PS1\[\033]0;($P) \w\007\]"
-		;;
-	*)
-		;;
-	esac
-}
-PROMPT_COMMAND="litex_buildenv_prompt; ${PROMPT_COMMAND}"
+if [ -z $SHELL_IS_BUILDENV_READY ]
+then
+    # Set prompt
+    ORIG_PS1="$PS1"
+    litex_buildenv_prompt() {
+        PS1="(LX) $ORIG_PS1"
+        case "$TERM" in
+        xterm*|rxvt*)
+            PS1="$PS1\[\033]0;($P) \w\007\]"
+            ;;
+        *)
+            ;;
+        esac
+    }
+    PROMPT_COMMAND="litex_buildenv_prompt; ${PROMPT_COMMAND}"
+    export SHELL_IS_BUILDENV_READY=1
+fi
 
 echo "Bootstrap finished, running litex_buildenv_ng..."
 
