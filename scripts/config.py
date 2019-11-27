@@ -17,39 +17,52 @@ class ConfigManager(Singleton):
     FIRMWARE = "firmware"
 
     def __get_config_file(self, name):
-        return join(self.base_path, name + ".env")
+        return join(self._base_path, name + ".env")
 
     def cpu(self):
-        return self.config[self.DEFAULT][self.CPU]
+        return self._config[self.DEFAULT][self.CPU]
 
     def cpu_variant(self):
-        return self.config[self.DEFAULT][self.CPU_VARIANT]
+        return self._config[self.DEFAULT][self.CPU_VARIANT]
 
     def platform(self):
-        return self.config[self.DEFAULT][self.PLATFORM]
+        return self._config[self.DEFAULT][self.PLATFORM]
 
     def target(self):
-        return self.config[self.DEFAULT][self.TARGET]
+        return self._config[self.DEFAULT][self.TARGET]
 
     def firmware(self):
-        return self.config[self.DEFAULT][self.FIRMWARE]
+        return self._config[self.DEFAULT][self.FIRMWARE]
+
+    def cpu_arch(self):
+        return {
+            "lm32":"lm32",
+            "mor1kx":"or1k",
+            "vexriscv":"riscv32",
+            "picorv32":"riscv32",
+            "minerva":"riscv32",
+        }.get(self.cpu())
+
+    def get_all_parameters(self):
+        return (self.cpu(), self.cpu_arch(), self.cpu_variant(), self.platform(), self.target(), self.firmware())
 
     def get_local_tools(self):
-        return [x for x in self.config.sections() + self.tools.sections() if x != self.DEFAULT]
+        return [x for x in self._config.sections() + self._tools.sections() if x != self.DEFAULT]
 
     def get_tool_config(self, tool):
-        if self.config.has_section(tool):
-            return self.config[tool]
-        if self.tools.has_section(tool):
-            return self.tools[tool]
+        if self._config.has_section(tool):
+            return self._config[tool]
+        if self._tools.has_section(tool):
+            return self._tools[tool]
 
     def print_config(self):
         print(f'''Current configuration settings:
-        CPU:  {self.cpu()}
-CPU variant:  {self.cpu_variant()}
-   Platform:  {self.platform()}
-     Target:  {self.target()}
-   Firmware:  {self.firmware()}
+             CPU:  {self.cpu()}
+CPU architecture:  {self.cpu_arch()}
+     CPU variant:  {self.cpu_variant()}
+        Platform:  {self.platform()}
+          Target:  {self.target()}
+        Firmware:  {self.firmware()}
         ''')
 
     def __init__(self):
@@ -57,45 +70,47 @@ CPU variant:  {self.cpu_variant()}
 
     def init(self, name, cpu, cpu_variant, platform, target, firmware):
 
-        self.base_path = abspath(join(dirname(abspath(__file__)), ".."))
-        self.file = self.__get_config_file(name)
+        self._base_path = abspath(join(dirname(abspath(__file__)), ".."))
+        self._config_file = self.__get_config_file(name)
+        self._tools_file = self.__get_config_file("local-tools")
 
-        if not exists(self.file):
-            with open(self.file, "a"):
-                pass
-        elif not isfile(self.file):
-            print(f'Could not open "{self.file} file')
-            sys.exit(-1)
-
-        self.config = configparser.ConfigParser()
-        self.config.read_file(open(self.file))
-        self.tools = configparser.ConfigParser()
-        self.tools.read_file(open(self.__get_config_file("local-tools")))
-
-        if not self.config.has_section(self.DEFAULT):
-            self.config.add_section(self.DEFAULT)
-
-        if cpu is not None:
-            self.config[self.DEFAULT][self.CPU] = cpu
-
-        if cpu_variant is not None:
-            self.config[self.DEFAULT][self.CPU_VARIANT] = cpu_variant
-
-        if platform is not None:
-            self.config[self.DEFAULT][self.PLATFORM] = platform
-
-        if target is not None:
-            self.config[self.DEFAULT][self.TARGET] = target
-
-        if firmware is not None:
-            self.config[self.DEFAULT][self.FIRMWARE] = firmware
-
-        for setting in [self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET, self.FIRMWARE]:
-            if not self.config.has_option(self.DEFAULT, setting):
-                print(f'Missing section "{setting}". Please fill the {self.file} or provide a "--{setting}" parameter')
+        for file in [self._config_file, self._tools_file]:
+            if not exists(file):
+                with open(file, "a"):
+                    pass
+            elif not isfile(file):
+                print(f'Could not open "{file}" file')
                 sys.exit(-1)
 
-        with open(self.file, "w") as file:
-            self.config.write(file)
+        self._config = configparser.ConfigParser()
+        self._config.read_file(open(self._config_file))
+        self._tools = configparser.ConfigParser()
+        self._tools.read_file(open(self._tools_file))
+
+        if not self._config.has_section(self.DEFAULT):
+            self._config.add_section(self.DEFAULT)
+
+        if cpu is not None:
+            self._config[self.DEFAULT][self.CPU] = cpu
+
+        if cpu_variant is not None:
+            self._config[self.DEFAULT][self.CPU_VARIANT] = cpu_variant
+
+        if platform is not None:
+            self._config[self.DEFAULT][self.PLATFORM] = platform
+
+        if target is not None:
+            self._config[self.DEFAULT][self.TARGET] = target
+
+        if firmware is not None:
+            self._config[self.DEFAULT][self.FIRMWARE] = firmware
+
+        for setting in [self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET, self.FIRMWARE]:
+            if not self._config.has_option(self.DEFAULT, setting):
+                print(f'Missing section "{setting}". Please fill the {self._config_file} or provide a "--{setting}" parameter')
+                sys.exit(-1)
+
+        with open(self._config_file, "w") as file:
+            self._config.write(file)
 
         self.print_config()
