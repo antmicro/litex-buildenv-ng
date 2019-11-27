@@ -2,10 +2,13 @@ import sys
 import configparser
 from os.path import dirname, join, abspath, exists, isfile
 
+
 class Singleton:
     _state = {}
+
     def __init__(self):
         self.__dict__ = self._state
+
 
 class ConfigManager(Singleton):
 
@@ -36,18 +39,22 @@ class ConfigManager(Singleton):
 
     def cpu_arch(self):
         return {
-            "lm32":"lm32",
-            "mor1kx":"or1k",
-            "vexriscv":"riscv32",
-            "picorv32":"riscv32",
-            "minerva":"riscv32",
+            "lm32": "lm32",
+            "mor1kx": "or1k",
+            "vexriscv": "riscv32",
+            "picorv32": "riscv32",
+            "minerva": "riscv32",
         }.get(self.cpu())
 
     def get_all_parameters(self):
-        return (self.cpu(), self.cpu_arch(), self.cpu_variant(), self.platform(), self.target(), self.firmware())
+        return (self.cpu(), self.cpu_arch(), self.cpu_variant(),
+                self.platform(), self.target(), self.firmware())
 
     def get_local_tools(self):
-        return [x for x in self._config.sections() + self._tools.sections() if x != self.DEFAULT]
+        return [
+            x for x in self._config.sections() + self._tools.sections()
+            if x != self.DEFAULT
+        ]
 
     def get_tool_config(self, tool):
         if self._config.has_section(tool):
@@ -105,9 +112,14 @@ CPU architecture:  {self.cpu_arch()}
         if firmware is not None:
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
 
-        for setting in [self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET, self.FIRMWARE]:
+        for setting in [
+                self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET,
+                self.FIRMWARE
+        ]:
             if not self._config.has_option(self.DEFAULT, setting):
-                print(f'Missing section "{setting}". Please fill the {self._config_file} or provide a "--{setting}" parameter')
+                print(
+                    f'Missing section "{setting}". Please fill the {self._config_file} or provide a "--{setting}" parameter'
+                )
                 sys.exit(-1)
 
         with open(self._config_file, "w") as file:

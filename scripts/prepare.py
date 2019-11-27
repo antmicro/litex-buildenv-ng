@@ -13,7 +13,6 @@ class RequirementsManager:
     _conda_deps = []
     _pip_deps = []
 
-
     def _add_dep(self, list, dep):
         #parse entry: name[==version] [#(bin|py):name-to-check]
         m = self._regex.search(dep)
@@ -21,8 +20,7 @@ class RequirementsManager:
             raise Exception(f"Requirement {dep} not in a proper format")
         list.append((m.group(1), m.group(3), m.group(5), m.group(6)))
 
-
-    def scan(self, target = None):
+    def scan(self, target=None):
         if not target:
             workdir = self._requirements_dir
         else:
@@ -46,14 +44,14 @@ class RequirementsManager:
                         continue
                     self._add_dep(self._pip_deps, dep)
 
-
     def _verify_binary_dep(self, name, version):
         if shutil.which(name):
             if version:
-                return version in subprocess.run([name, '--version'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+                return version in subprocess.run(
+                    [name, '--version'],
+                    stdout=subprocess.PIPE).stdout.decode('utf-8')
             return True
         return False
-
 
     def _verify_python_dep(self, name, version):
         try:
@@ -63,7 +61,6 @@ class RequirementsManager:
             return True
         except:
             return False
-
 
     def _verify_dep(self, dep, default):
         name, version, type, verify = dep
@@ -78,12 +75,14 @@ class RequirementsManager:
 
     def _build_deps_and_run_install(self, params, deps, noun):
         for dep in deps:
-            if dep[1]: # version
+            if dep[1]:  # version
                 params.append(f"{dep[0]}={dep[1]}")
             else:
                 params.append(dep[0])
 
-        process = subprocess.Popen(params, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        process = subprocess.Popen(params,
+                                   stderr=subprocess.STDOUT,
+                                   stdout=subprocess.PIPE)
         while True:
             output = process.stdout.readline()
             if output == b'' and process.poll() is not None:
@@ -93,8 +92,9 @@ class RequirementsManager:
         if process.poll() == 0:
             print(f"Succesfully installed {noun} dependencies")
         else:
-            print(f"There was an error installing {noun} packages, see the log above")
-
+            print(
+                f"There was an error installing {noun} packages, see the log above"
+            )
 
     def install(self):
         installed_conda = []
@@ -102,7 +102,9 @@ class RequirementsManager:
             if self._verify_dep(dep, "bin"):
                 installed_conda.append(dep)
 
-        self._conda_deps = [x for x in self._conda_deps if x not in installed_conda]
+        self._conda_deps = [
+            x for x in self._conda_deps if x not in installed_conda
+        ]
 
         installed_pip = []
         for dep in self._pip_deps:
@@ -115,23 +117,24 @@ class RequirementsManager:
         if "CONDA_FLAGS" in os.environ.keys():
             conda_params.append(os.environ["CONDA_FLAGS"])
 
-        self._build_deps_and_run_install(conda_params, self._conda_deps, "conda")
+        self._build_deps_and_run_install(conda_params, self._conda_deps,
+                                         "conda")
 
         pip_params = ["pip", "install"]
 
         self._build_deps_and_run_install(pip_params, self._pip_deps, "pip")
 
-
-
     def __init__(self):
-        self._requirements_dir = abspath(join(join(dirname(abspath(__file__)), ".."), "requirements"))
+        self._requirements_dir = abspath(
+            join(join(dirname(abspath(__file__)), ".."), "requirements"))
         if not isdir(self._requirements_dir):
             raise Exception("Missing requirements directory")
         #([^\ #]+) non-space, non # character -> package name
         #(==([^ #]+))? - two equality signs followed by version - optional
         # #(bin|py) - hash and information how to check the requirement
         # (\S+) - the requirement name to look for
-        self._regex = re.compile(r"^([^\ #(==)]+)(==([^ #]+))?( ?#(bin|py):(\S+))?$")
+        self._regex = re.compile(
+            r"^([^\ #(==)]+)(==([^ #]+))?( ?#(bin|py):(\S+))?$")
 
 
 def prepare():
