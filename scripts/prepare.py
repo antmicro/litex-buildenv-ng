@@ -5,29 +5,30 @@ import sys
 import os
 import subprocess
 import importlib
-import conda.cli.python_api as Conda
-from os.path import dirname, join, abspath, exists, isdir, isfile
+import os.path as Path
 
 
 class RequirementsManager:
-    _conda_deps = []
-    _pip_deps = []
-
     def _add_dep(self, list, dep):
-        #parse entry: name[==version] [#(bin|py):name-to-check]
+        # parse entry: name[==version] [#(bin|py):name-to-check]
         m = self._regex.search(dep)
         if not m:
             raise Exception(f"Requirement {dep} not in a proper format")
-        list.append((m.group(1), m.group(3), m.group(5), m.group(6)))
+        dependency = {}
+        dependency["name"] = m.group(1)
+        dependency["version"] = m.group(3)
+        dependency["type"] = m.group(5)
+        dependency["verifiable_name"] = m.group(6)
+        list.append(dependency)
 
     def scan(self, target=None):
         if not target:
             workdir = self._requirements_dir
         else:
-            workdir = join(self._requirements_dir, target)
+            workdir = Path.join(self._requirements_dir, target)
 
-        conda_file = join(workdir, "conda.txt")
-        if isfile(conda_file):
+        conda_file = Path.join(workdir, "conda.txt")
+        if Path.isfile(conda_file):
             with open(conda_file, "r") as f:
                 for dep in f:
                     dep = dep.strip()
@@ -35,8 +36,8 @@ class RequirementsManager:
                         continue
                     self._add_dep(self._conda_deps, dep)
 
-        pip_file = join(workdir, "pip.txt")
-        if isfile(pip_file):
+        pip_file = Path.join(workdir, "pip.txt")
+        if Path.isfile(pip_file):
             with open(pip_file, "r") as f:
                 for dep in f:
                     dep = dep.strip()
@@ -49,7 +50,8 @@ class RequirementsManager:
             if version:
                 return version in subprocess.run(
                     [name, '--version'],
-                    stdout=subprocess.PIPE).stdout.decode('utf-8')
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT).stdout.decode('utf-8')
             return True
         return False
 
@@ -59,26 +61,29 @@ class RequirementsManager:
             if version:
                 return version in i.__version__
             return True
-        except:
+        except ImportError:
             return False
 
     def _verify_dep(self, dep, default):
-        name, version, type, verify = dep
 
-        to_check = verify or name
-        how_to_check = type or default
+        to_check = dep["verifiable_name"] or dep["name"]
+        how_to_check = dep["type"] or default
 
         if how_to_check == 'bin':
-            return self._verify_binary_dep(to_check, version)
+            return self._verify_binary_dep(to_check, dep["version"])
         else:
-            return self._verify_python_dep(to_check, version)
+            return self._verify_python_dep(to_check, dep["version"])
 
     def _build_deps_and_run_install(self, params, deps, noun):
+        if len(deps) == 0:
+            return
         for dep in deps:
-            if dep[1]:  # version
-                params.append(f"{dep[0]}={dep[1]}")
+            # we filter out git+.*, as these indicate python modules fetched
+            # from git repositiories, without version information
+            if dep["version"] and not dep["name"].startswith("git+"):
+                params.append(f"{dep['name']}={dep['version']}")
             else:
-                params.append(dep[0])
+                params.append(dep["name"])
 
         process = subprocess.Popen(params,
                                    stderr=subprocess.STDOUT,
@@ -93,8 +98,7 @@ class RequirementsManager:
             print(f"Succesfully installed {noun} dependencies")
         else:
             print(
-                f"There was an error installing {noun} packages, see the log above"
-            )
+                f"There was an error installing {noun} packages, see the log")
 
     def install(self):
         installed_conda = []
@@ -125,12 +129,15 @@ class RequirementsManager:
         self._build_deps_and_run_install(pip_params, self._pip_deps, "pip")
 
     def __init__(self):
-        self._requirements_dir = abspath(
-            join(join(dirname(abspath(__file__)), ".."), "requirements"))
-        if not isdir(self._requirements_dir):
+        self._conda_deps = []
+        self._pip_deps = []
+        self._requirements_dir = Path.abspath(
+            Path.join(Path.join(Path.dirname(Path.abspath(__file__)), ".."),
+                      "requirements"))
+        if not Path.isdir(self._requirements_dir):
             raise Exception("Missing requirements directory")
-        #([^\ #]+) non-space, non # character -> package name
-        #(==([^ #]+))? - two equality signs followed by version - optional
+        # ([^\ #]+) non-space, non # character -> package name
+        # (==([^ #]+))? - two equality signs followed by version - optional
         # #(bin|py) - hash and information how to check the requirement
         # (\S+) - the requirement name to look for
         self._regex = re.compile(
@@ -143,15 +150,15 @@ def prepare():
     If they are not, they are installed and/or configured.
     """
     #
-    #Stages:
-    #- verification of git submodules (not yet)
-    #- lookup of dependencies depending on settings
-    #- configuration of local tools
-    #- conda installations
+    # Stages:
+    # - verification of git submodules (not yet)
+    # - lookup of dependencies depending on settings
+    # - configuration of local tools
+    # - conda installations
 
-    #bin|py
-    #conda -> default bin
-    #pip - default py
+    # bin|py
+    # conda -> default bin
+    # pip - default py
 
     req = RequirementsManager()
     cfg = config.ConfigManager()
