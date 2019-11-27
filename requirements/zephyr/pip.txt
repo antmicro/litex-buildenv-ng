@@ -1,0 +1,5 @@
+pyelftools #py:elftools
+packaging
+west
+pykwalify #py:pykwalify.core
+cmake==4.7.10 #bin:cmake
