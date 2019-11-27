@@ -101,21 +101,6 @@ class RequirementsManager:
                 f"There was an error installing {noun} packages, see the log")
 
     def install(self):
-        installed_conda = []
-        for dep in self._conda_deps:
-            if self._verify_dep(dep, "bin"):
-                installed_conda.append(dep)
-
-        self._conda_deps = [
-            x for x in self._conda_deps if x not in installed_conda
-        ]
-
-        installed_pip = []
-        for dep in self._pip_deps:
-            if self._verify_dep(dep, "py"):
-                installed_pip.append(dep)
-
-        self._pip_deps = [x for x in self._pip_deps if x not in installed_pip]
 
         conda_params = ["conda", "install", "-y"]
         if "CONDA_FLAGS" in os.environ.keys():
@@ -124,9 +109,19 @@ class RequirementsManager:
         self._build_deps_and_run_install(conda_params, self._conda_deps,
                                          "conda")
 
+        for dep in self._conda_deps:
+            if not self._verify_dep(dep, "bin"):
+                raise Exception(f"Conda dependency {dep['name']} was not installed properly")
+
+
         pip_params = ["pip", "install"]
 
         self._build_deps_and_run_install(pip_params, self._pip_deps, "pip")
+
+        for dep in self._pip_deps:
+            if not self._verify_dep(dep, "py"):
+                raise Exception(f"PIP dependency {dep['name']} was not installed properly")
+
 
     def __init__(self):
         self._conda_deps = []
