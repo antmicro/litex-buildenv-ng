@@ -8,8 +8,8 @@ from gateware import gateware
 from firmware import firmware
 
 def init_config(args):
-    configuration = config.ConfigManager()
-    configuration.init(args.env, args.cpu, args.cpu_variant, args.platform, args.target, args.firmware)
+    cfg = config.ConfigManager()
+    cfg.init(args.env, args.cpu, args.cpu_variant, args.platform, args.target, args.firmware)
 
 if __name__ == '__main__':
     parser = argh.ArghParser()
