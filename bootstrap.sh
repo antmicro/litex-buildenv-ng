@@ -59,7 +59,7 @@ if [ -f /etc/udev/rules.d/99-hdmi2usb-permissions.rules -o -f /lib/udev/rules.d/
 	true
 else
 	echo "Please install the HDMI2USB udev rules, or "export HDMI2USB_UDEV_IGNORE=somevalue" to ignore this."
-	echo "On Debian/Ubuntu, these can be installed by running scripts/debian-setup.sh"
+	echo "For installation instructions, please see https://github.com/timvideos/litex-buildenv/wiki/HowTo-LCA2018-FPGA-Miniconf#download--setup-udev-rules"
 	echo
 	return 1
 fi
@@ -117,8 +117,8 @@ index 0228a3d0b..ffb879a39 100644
 +++ b/conda/common/path.py
 @@ -42,6 +42,10 @@ def is_path(value):
      return re.match(PATH_MATCH_REGEX, value)
- 
- 
+
+
 +def expanduser(path):
 +    return expandvars(path.replace('~', '${CONDA_DIR}'))
 +
