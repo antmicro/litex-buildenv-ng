@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argh
-import configparser
 import config
 from prepare import prepare
 from gateware import gateware

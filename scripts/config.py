@@ -97,19 +97,19 @@ CPU architecture:  {self.cpu_arch()}
         if not self._config.has_section(self.DEFAULT):
             self._config.add_section(self.DEFAULT)
 
-        if cpu is not None:
+        if cpu:
             self._config[self.DEFAULT][self.CPU] = cpu
 
-        if cpu_variant is not None:
+        if cpu_variant:
             self._config[self.DEFAULT][self.CPU_VARIANT] = cpu_variant
 
-        if platform is not None:
+        if platform:
             self._config[self.DEFAULT][self.PLATFORM] = platform
 
-        if target is not None:
+        if target:
             self._config[self.DEFAULT][self.TARGET] = target
 
-        if firmware is not None:
+        if firmware:
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
 
         for setting in [
@@ -118,7 +118,8 @@ CPU architecture:  {self.cpu_arch()}
         ]:
             if not self._config.has_option(self.DEFAULT, setting):
                 print(
-                    f'Missing section "{setting}". Please fill the {self._config_file} or provide a "--{setting}" parameter'
+                    f'Missing section "{setting}". Please fill the '
+                    f'{self._config_file} or provide a "--{setting}" parameter'
                 )
                 sys.exit(-1)
 
