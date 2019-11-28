@@ -1,5 +1,6 @@
 import sys
 import os
+import platform
 import configparser
 import os.path as Path
 
@@ -65,6 +66,13 @@ class ConfigManager(Singleton):
             x for x in self._config.sections() + self._tools.sections()
             if x != self.DEFAULT
         ]
+
+    def get_shell(self):
+        host = platform.system()
+        if host in ["Darwin", "Linux"]:
+            return "/bin/bash"
+        else:
+            return "cmd"
 
     def get_tool_config(self, tool):
         if self._config.has_section(tool):
