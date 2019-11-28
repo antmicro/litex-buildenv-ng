@@ -1,6 +1,7 @@
 import sys
+import os
 import configparser
-from os.path import dirname, join, abspath, exists, isfile
+import os.path as Path
 
 
 class Singleton:
@@ -20,7 +21,10 @@ class ConfigManager(Singleton):
     FIRMWARE = "firmware"
 
     def __get_config_file(self, name):
-        return join(self._base_path, name + ".env")
+        return Path.join(self._base_path, name + ".env")
+
+    def is_local_tool(self, name):
+        return name in self.get_local_tools()
 
     def cpu(self):
         return self._config[self.DEFAULT][self.CPU]
@@ -36,6 +40,12 @@ class ConfigManager(Singleton):
 
     def firmware(self):
         return self._config[self.DEFAULT][self.FIRMWARE]
+
+    def conda_flags(self):
+        return self._conda_flags
+
+    def local_tools_dir(self):
+        return self._local_tools
 
     def cpu_arch(self):
         return {
@@ -77,15 +87,25 @@ CPU architecture:  {self.cpu_arch()}
 
     def init(self, name, cpu, cpu_variant, platform, target, firmware):
 
-        self._base_path = abspath(join(dirname(abspath(__file__)), ".."))
+        if "CONDA_FLAGS" in os.environ.keys():
+            self._conda_flags = os.environ["CONDA_FLAGS"]
+        else:
+            self.conda_flags = None
+
+        if "BUILDENV_LOCAL_TOOLS" in os.environ.keys():
+            self._local_tools = os.environ["BUILDENV_LOCAL_TOOLS"]
+        else:
+            self._local_tools = None
+
+        self._base_path = Path.abspath(Path.join(Path.dirname(Path.abspath(__file__)), ".."))
         self._config_file = self.__get_config_file(name)
         self._tools_file = self.__get_config_file("local-tools")
 
         for file in [self._config_file, self._tools_file]:
-            if not exists(file):
+            if not Path.exists(file):
                 with open(file, "a"):
                     pass
-            elif not isfile(file):
+            elif not Path.isfile(file):
                 print(f'Could not open "{file}" file')
                 sys.exit(-1)
 
