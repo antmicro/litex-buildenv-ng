@@ -1,10 +1,9 @@
 import config
+import utils
 import re
 import shutil
-import sys
-import os
-import subprocess
 import importlib
+import importlib.util
 import os.path as Path
 
 
@@ -56,6 +55,32 @@ class RequirementsManager:
         except ImportError:
             return False
 
+    def _install_local_tool(self, dep, config):
+        tool_config = config.get_tool_config(dep["name"])
+        keys = tool_config.keys()
+        if len(keys) > 1 or next(iter(keys)) not in ["path", "python", "script"]:
+            raise Exception(f"Local tools may have up to one config parameter, either 'path', 'python' or 'script'. Found {list(keys)}.")
+
+        key = next(iter(keys))
+        if key == "path":
+            pass
+        elif key == "python":
+            # no try/except - we want to fail if it doesn't work
+            spec = importlib.util.spec_from_file_location(dep["name"], tool_config[key])
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+
+            if hasattr(module, "setup"):
+                module.setup(config.local_tools_dir())
+            else:
+                raise Exception(f"Module {tool_config[key]} does not implement `setup` function")
+
+        else:  # key is "script"
+            utils.run_process_print_output(tool_config[key])
+
+
+
     def _verify_dep(self, dep, default):
 
         to_check = dep["verifiable_name"] or dep["name"]
@@ -70,6 +95,10 @@ class RequirementsManager:
         if len(deps) == 0:
             return
         for dep in deps:
+            if config.is_local_tool(dep["name"]):
+                self._install_local_tool(dep, config)
+                continue
+
             # we filter out git+.*, as these indicate python modules fetched
             # from git repositiories, without version information
             if dep["version"] and not dep["name"].startswith("git+"):
