@@ -70,10 +70,16 @@ class RequirementsManager:
         key = next(iter(keys))
 
         if key == "path":
-            for entry in os.listdir(tool_config[key]):
-                source = Path.join(tool_config[key], entry)
-                destination = Path.join(config.local_tools_dir(), entry)
-                utils.create_symlink(source, destination)
+            if Path.isdir(tool_config[key]):
+                for entry in os.listdir(tool_config[key]):
+                    source = Path.join(tool_config[key], entry)
+                    destination = Path.join(config.local_tools_dir(), entry)
+                    utils.create_symlink(source, destination)
+            elif Path.isfile(tool_config[key]):
+                utils.create_symlink(
+                    tool_config[key],
+                    Path.join(config.local_tools_dir(),
+                              Path.basename(tool_config[key])))
 
         elif key == "python":
             # no try/except - we want to fail if it doesn't work
