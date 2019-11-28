@@ -80,6 +80,10 @@ class RequirementsManager:
                     tool_config[key],
                     Path.join(config.local_tools_dir(),
                               Path.basename(tool_config[key])))
+            else:
+                raise Exception(
+                    f"Local dependency for {key} not found: {tool_config[key]}"
+                )
 
         elif key == "python":
             # no try/except - we want to fail if it doesn't work
