@@ -84,7 +84,10 @@ class RequirementsManager:
                 )
 
         else:  # key is "script"
-            utils.run_process_print_output(tool_config[key])
+            utils.run_process_print_output([
+                config.get_shell(), tool_config[key],
+                config.local_tools_dir()
+            ])
 
     def _verify_dep(self, dep, default):
 
