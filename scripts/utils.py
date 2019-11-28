@@ -1,6 +1,19 @@
 import subprocess
 import importlib
 import sys
+import os
+import os.path as Path
+
+
+def create_symlink(source, destination):
+    if Path.exists(destination):
+        real_target = os.readlink(destination)
+        if real_target != source:
+            raise Exception(
+                f"Cannot install {source}, as the target symlink {destination} exists and points to {real_target}"
+            )
+    else:
+        os.symlink(source, destination)
 
 
 def get_python_module_version(module_name):
