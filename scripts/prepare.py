@@ -47,20 +47,12 @@ class RequirementsManager:
 
     def _verify_binary_dep(self, name, version):
         if shutil.which(name):
-            if version:
-                return version in subprocess.run(
-                    [name, '--version'],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT).stdout.decode('utf-8')
-            return True
+            return version in utils.get_program_version(name) if version else True
         return False
 
     def _verify_python_dep(self, name, version):
         try:
-            i = importlib.import_module(name)
-            if version:
-                return version in i.__version__
-            return True
+            return version in utils.get_python_module_version(name) if version else True
         except ImportError:
             return False
 
@@ -85,16 +77,11 @@ class RequirementsManager:
             else:
                 params.append(dep["name"])
 
-        process = subprocess.Popen(params,
-                                   stderr=subprocess.STDOUT,
-                                   stdout=subprocess.PIPE)
-        while True:
-            output = process.stdout.readline()
-            if output == b'' and process.poll() is not None:
-                break
-            if output:
-                print(output.decode(sys.stdout.encoding).strip("\n\r"))
-        if process.poll() == 0:
+        if len(params) == 0:
+            # nothing to install
+            return
+
+        if utils.run_process_print_output(params):
             print(f"Succesfully installed {noun} dependencies")
         else:
             print(
