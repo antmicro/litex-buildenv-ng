@@ -46,40 +46,45 @@ class RequirementsManager:
 
     def _verify_binary_dep(self, name, version):
         if shutil.which(name):
-            return version in utils.get_program_version(name) if version else True
+            return version in utils.get_program_version(
+                name) if version else True
         return False
 
     def _verify_python_dep(self, name, version):
         try:
-            return version in utils.get_python_module_version(name) if version else True
+            return version in utils.get_python_module_version(
+                name) if version else True
         except ImportError:
             return False
 
     def _install_local_tool(self, dep, config):
         tool_config = config.get_tool_config(dep["name"])
         keys = tool_config.keys()
-        if len(keys) > 1 or next(iter(keys)) not in ["path", "python", "script"]:
-            raise Exception(f"Local tools may have up to one config parameter, either 'path', 'python' or 'script'. Found {list(keys)}.")
+        if len(keys) > 1 or next(
+                iter(keys)) not in ["path", "python", "script"]:
+            raise Exception(
+                f"Local tools may have up to one config parameter, either 'path', 'python' or 'script'. Found {list(keys)}."
+            )
 
         key = next(iter(keys))
         if key == "path":
             pass
         elif key == "python":
             # no try/except - we want to fail if it doesn't work
-            spec = importlib.util.spec_from_file_location(dep["name"], tool_config[key])
+            spec = importlib.util.spec_from_file_location(
+                dep["name"], tool_config[key])
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
-
 
             if hasattr(module, "setup"):
                 module.setup(config.local_tools_dir())
             else:
-                raise Exception(f"Module {tool_config[key]} does not implement `setup` function")
+                raise Exception(
+                    f"Module {tool_config[key]} does not implement `setup` function"
+                )
 
         else:  # key is "script"
             utils.run_process_print_output(tool_config[key])
-
-
 
     def _verify_dep(self, dep, default):
 
@@ -127,17 +132,19 @@ class RequirementsManager:
 
         for dep in self._conda_deps:
             if not self._verify_dep(dep, "bin"):
-                raise Exception(f"Conda dependency {dep['name']} was not installed properly")
-
+                raise Exception(
+                    f"Conda dependency {dep['name']} was not installed properly"
+                )
 
         pip_params = ["pip", "install"]
 
-        self._build_deps_and_run_install(pip_params, self._pip_deps, "pip", config)
+        self._build_deps_and_run_install(pip_params, self._pip_deps, "pip",
+                                         config)
 
         for dep in self._pip_deps:
             if not self._verify_dep(dep, "py"):
-                raise Exception(f"PIP dependency {dep['name']} was not installed properly")
-
+                raise Exception(
+                    f"PIP dependency {dep['name']} was not installed properly")
 
     def __init__(self):
         self._conda_deps = []

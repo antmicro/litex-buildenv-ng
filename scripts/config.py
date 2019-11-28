@@ -97,7 +97,8 @@ CPU architecture:  {self.cpu_arch()}
         else:
             self._local_tools = None
 
-        self._base_path = Path.abspath(Path.join(Path.dirname(Path.abspath(__file__)), ".."))
+        self._base_path = Path.abspath(
+            Path.join(Path.dirname(Path.abspath(__file__)), ".."))
         self._config_file = self.__get_config_file(name)
         self._tools_file = self.__get_config_file("local-tools")
 
