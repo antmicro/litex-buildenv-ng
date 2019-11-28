@@ -4,6 +4,7 @@ import re
 import shutil
 import importlib
 import importlib.util
+import os
 import os.path as Path
 
 
@@ -67,8 +68,20 @@ class RequirementsManager:
             )
 
         key = next(iter(keys))
+
         if key == "path":
-            pass
+            for entry in os.listdir(tool_config[key]):
+                source = Path.join(tool_config[key], entry)
+                destination = Path.join(config.local_tools_dir(), entry)
+                if Path.exists(destination):
+                    real_target = os.readlink(destination)
+                    if real_target != source:
+                        raise Exception(
+                            f"Cannot install {source}, as the target symlink {destination} exists and points to {real_target}"
+                        )
+                else:
+                    os.symlink(source, destination)
+
         elif key == "python":
             # no try/except - we want to fail if it doesn't work
             spec = importlib.util.spec_from_file_location(
