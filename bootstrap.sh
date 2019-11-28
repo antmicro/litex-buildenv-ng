@@ -85,7 +85,7 @@ echo ""
 echo "Initializing environment"
 echo "---------------------------------"
 
-mkdir -p $BUILD_DIR
+mkdir -p $BUILDENV_LOCAL_TOOLS
 
 unset PYTHONPATH
 export PYTHONHASHSEED=0
