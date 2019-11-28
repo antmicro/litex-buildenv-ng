@@ -66,7 +66,7 @@ class RequirementsManager:
         else:
             return self._verify_python_dep(to_check, dep["version"])
 
-    def _build_deps_and_run_install(self, params, deps, noun):
+    def _build_deps_and_run_install(self, params, deps, noun, config):
         if len(deps) == 0:
             return
         for dep in deps:
@@ -87,14 +87,14 @@ class RequirementsManager:
             print(
                 f"There was an error installing {noun} packages, see the log")
 
-    def install(self):
+    def install(self, config):
 
         conda_params = ["conda", "install", "-y"]
-        if "CONDA_FLAGS" in os.environ.keys():
-            conda_params.append(os.environ["CONDA_FLAGS"])
+        if config.conda_flags:
+            conda_params.append(config.conda_flags())
 
         self._build_deps_and_run_install(conda_params, self._conda_deps,
-                                         "conda")
+                                         "conda", config)
 
         for dep in self._conda_deps:
             if not self._verify_dep(dep, "bin"):
@@ -103,7 +103,7 @@ class RequirementsManager:
 
         pip_params = ["pip", "install"]
 
-        self._build_deps_and_run_install(pip_params, self._pip_deps, "pip")
+        self._build_deps_and_run_install(pip_params, self._pip_deps, "pip", config)
 
         for dep in self._pip_deps:
             if not self._verify_dep(dep, "py"):
@@ -150,4 +150,4 @@ def prepare():
     for target in cfg.get_all_parameters():
         req.scan(target)
 
-    req.install()
+    req.install(cfg)
