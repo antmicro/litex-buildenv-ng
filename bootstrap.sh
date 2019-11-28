@@ -64,9 +64,10 @@ else
 	return 1
 fi
 
-BUILD_DIR=$TOP_DIR/build
-THIRD_DIR=$TOP_DIR/third_party
-CONDA_DIR=$BUILD_DIR/conda
+export BUILD_DIR=$TOP_DIR/build
+export THIRD_DIR=$TOP_DIR/third_party
+export CONDA_DIR=$BUILD_DIR/conda
+export BUILDENV_LOCAL_TOOLS=$BUILD_DIR/bin
 
 CONDA_VERSION=4.7.10
 PYTHON_VERSION=3.7
@@ -96,7 +97,7 @@ export PYTHONDONTWRITEBYTECODE=1
 if [ -z "$SHELL_IS_BUILDENV_READY" ]
 then
     # Install and setup conda for downloading packages
-    export PATH=$CONDA_DIR/bin:$PATH:/sbin
+    export PATH=$BUILDENV_LOCAL_TOOLS:$CONDA_DIR/bin:$PATH:/sbin
 fi
 
 function fix_conda {
