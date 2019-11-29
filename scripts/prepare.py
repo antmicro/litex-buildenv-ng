@@ -150,7 +150,12 @@ class RequirementsManager:
 
         pip_params = ["pip", "install"]
 
-        self._build_deps_and_run_install(pip_params, self._pip_deps, "pip",
+        missing_pip_deps = []
+        for dep in self._pip_deps:
+            if not self._verify_dep(dep, "py"):
+                missing_pip_deps.append(dep)
+
+        self._build_deps_and_run_install(pip_params, missing_pip_deps, "pip",
                                          config)
 
         for dep in self._pip_deps:
