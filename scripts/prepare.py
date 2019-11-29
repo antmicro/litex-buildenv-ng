@@ -52,8 +52,8 @@ class RequirementsManager:
 
     def _verify_python_dep(self, name, version):
         try:
-            return version in utils.get_python_module_version(
-                name) if version else True
+            module_version = utils.get_python_module_version(name)
+            return version in module_version if version else True
         except ImportError:
             return False
 
