@@ -2,8 +2,6 @@ import config
 import utils
 import re
 import shutil
-import importlib
-import importlib.util
 import os
 import os.path as Path
 
@@ -86,18 +84,8 @@ class RequirementsManager:
                 )
 
         elif key == "python":
-            # no try/except - we want to fail if it doesn't work
-            spec = importlib.util.spec_from_file_location(
-                dep["name"], tool_config[key])
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-
-            if hasattr(module, "setup"):
-                module.setup(config.local_tools_dir())
-            else:
-                raise Exception(
-                    f"Module {tool_config[key]} does not implement `setup` function"
-                )
+            utils.run_python_module_log_output(dep["name"], tool_config[key],
+                                               config.local_tools_dir())
 
         else:  # key is "script"
             utils.run_process_log_output([

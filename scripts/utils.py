@@ -1,8 +1,10 @@
 import subprocess
 import importlib
+import importlib.util
 import sys
 import os
 from log import Log
+import io
 import contextlib
 import os.path as Path
 
@@ -27,6 +29,29 @@ def get_program_version(program):
     return subprocess.run([program, '--version'],
                           stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT).stdout.decode('utf-8')
+
+
+def run_python_module_log_output(name, module_path, tools_dir):
+    # no try/except - we want to fail if it doesn't work
+    spec = importlib.util.spec_from_file_location(name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    if hasattr(module, "setup"):
+        try:
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                module.setup(tools_dir)
+        except Exception as e:
+            print(output.getvalue())
+            Log.log(e)
+            raise
+        else:
+            Log.log(output.getvalue())
+
+    else:
+        raise Exception(
+            f"Module {module_path} does not implement `setup` function")
 
 
 def run_process_log_output(params):
