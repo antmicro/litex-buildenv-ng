@@ -1,6 +1,7 @@
 import subprocess
 import importlib
 import sys
+import config
 import os
 import os.path as Path
 
@@ -27,15 +28,24 @@ def get_program_version(program):
                           stderr=subprocess.STDOUT).stdout.decode('utf-8')
 
 
-def run_process_print_output(params):
+def run_process_log_output(params):
+    log = ""
+    conf = config.ConfigManager()
     process = subprocess.Popen(params,
                                stderr=subprocess.STDOUT,
                                stdout=subprocess.PIPE)
-    while True:
-        output = process.stdout.readline()
-        if output == b'' and process.poll() is not None:
-            break
-        if output:
-            print(output.decode(sys.stdout.encoding).strip("\n\r"))
+
+    with open(conf.build_log_file(), "a+") as logfile:
+        while True:
+            output = process.stdout.readline()
+
+            if output == b'' and process.poll() is not None:
+                break
+            if output:
+                log += output.decode(sys.stdout.encoding)
+        logfile.write(log)
+
+    if process.poll() != 0:
+        print(log)
 
     return process.poll() == 0

@@ -134,7 +134,7 @@ class RequirementsManager:
             # nothing to install
             return
 
-        if utils.run_process_print_output(params):
+        if utils.run_process_log_output(params):
             print(f"Succesfully installed {noun} dependencies")
         else:
             print(

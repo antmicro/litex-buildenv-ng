@@ -67,6 +67,9 @@ class ConfigManager(Singleton):
             if x != self.DEFAULT
         ]
 
+    def build_log_file(self):
+        return Path.join(self._build_dir, "build.log")
+
     def get_shell(self):
         host = platform.system()
         if host in ["Darwin", "Linux"]:
@@ -104,6 +107,14 @@ CPU architecture:  {self.cpu_arch()}
             self._local_tools = os.environ["BUILDENV_LOCAL_TOOLS"]
         else:
             self._local_tools = None
+
+        if "BUILD_DIR" in os.environ.keys():
+            self._build_dir = os.environ["BUILD_DIR"]
+        else:
+            self._build_dir = None
+
+        if Path.exists(self.build_log_file()):
+            os.remove(self.build_log_file())
 
         self._base_path = Path.abspath(
             Path.join(Path.dirname(Path.abspath(__file__)), ".."))
