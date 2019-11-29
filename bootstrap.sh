@@ -68,6 +68,7 @@ export BUILD_DIR=$TOP_DIR/build
 export THIRD_DIR=$TOP_DIR/third_party
 export CONDA_DIR=$BUILD_DIR/conda
 export BUILDENV_LOCAL_TOOLS=$BUILD_DIR/bin
+export BUILDENV_BUILD_LOG=$BUILD_DIR/build.log
 
 CONDA_VERSION=4.7.10
 PYTHON_VERSION=3.7
@@ -227,6 +228,6 @@ then
     export SHELL_IS_BUILDENV_READY=1
 fi
 
-echo "Bootstrap finished, running litex_buildenv_ng..."
+echo "Bootstrap finished, running litex_buildenv_ng. Logs will be available in $BUILDENV_BUILD_LOG..."
 
 python3 scripts/litex_buildenv_ng.py $@ prepare
