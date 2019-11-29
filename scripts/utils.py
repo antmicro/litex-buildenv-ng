@@ -1,8 +1,9 @@
 import subprocess
 import importlib
 import sys
-import config
 import os
+from log import Log
+import contextlib
 import os.path as Path
 
 
@@ -30,22 +31,21 @@ def get_program_version(program):
 
 def run_process_log_output(params):
     log = ""
-    conf = config.ConfigManager()
     process = subprocess.Popen(params,
                                stderr=subprocess.STDOUT,
                                stdout=subprocess.PIPE)
 
-    with open(conf.build_log_file(), "a+") as logfile:
-        while True:
-            output = process.stdout.readline()
+    while True:
+        output = process.stdout.readline()
 
-            if output == b'' and process.poll() is not None:
-                break
-            if output:
-                log += output.decode(sys.stdout.encoding)
-        logfile.write(log)
+        if output == b'' and process.poll() is not None:
+            break
+        if output:
+            log += output.decode(sys.stdout.encoding)
+    Log.log(log)
 
     if process.poll() != 0:
         print(log)
+        raise Exception(f"Failed to run {params}")
 
     return process.poll() == 0

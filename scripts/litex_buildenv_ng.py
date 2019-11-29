@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import argh
+import traceback
+from log import Log
 import config
 from prepare import prepare
 from gateware import gateware
@@ -25,6 +27,18 @@ if __name__ == '__main__':
     parser.add_argument("--platform", help="platform name")
     parser.add_argument("--target", help="setup type")
     parser.add_argument("--firmware", help="target firmware")
+    parser.add_argument("--trace",
+                        action="store_true",
+                        help="dump stack trace on error")
     parser.add_commands([prepare, gateware, firmware])
 
-    parser.dispatch(pre_call=init_config)
+    options = parser.parse_args()
+
+    try:
+        parser.dispatch(pre_call=init_config)
+    except Exception as e:
+        Log.log(traceback.format_exc())
+        Log.log(e)
+        print(f"Failed to prepare the environment: {e}")
+        if options.trace:
+            raise

@@ -100,7 +100,7 @@ class RequirementsManager:
                 )
 
         else:  # key is "script"
-            utils.run_process_print_output([
+            utils.run_process_log_output([
                 config.get_shell(), tool_config[key],
                 config.local_tools_dir()
             ])
