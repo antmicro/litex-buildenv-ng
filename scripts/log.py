@@ -7,7 +7,9 @@ class Log:
 
     @staticmethod
     def log(arg):
-        Log._log.write(str(arg))
+        s = str(arg)
+        print(s)
+        Log._log.write(s)
 
     @staticmethod
     def dump():

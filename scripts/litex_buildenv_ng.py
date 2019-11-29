@@ -38,7 +38,6 @@ if __name__ == '__main__':
         parser.dispatch(pre_call=init_config)
     except Exception as e:
         Log.log(traceback.format_exc())
-        Log.log(e)
-        print(f"Failed to prepare the environment: {e}")
+        Log.log(f"Failed to prepare the environment: {e}")
         if options.trace:
             raise

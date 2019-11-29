@@ -3,6 +3,7 @@ import os
 import platform
 import configparser
 import os.path as Path
+from log import Log
 
 
 class Singleton:
@@ -81,7 +82,7 @@ class ConfigManager(Singleton):
             return self._tools[tool]
 
     def print_config(self):
-        print(f'''Current configuration settings:
+        Log.log(f'''Current configuration settings:
              CPU:  {self.cpu()}
 CPU architecture:  {self.cpu_arch()}
      CPU variant:  {self.cpu_variant()}
@@ -120,7 +121,7 @@ CPU architecture:  {self.cpu_arch()}
                 with open(file, "a"):
                     pass
             elif not Path.isfile(file):
-                print(f'Could not open "{file}" file')
+                Log.log(f'Could not open "{file}" file')
                 sys.exit(-1)
 
         self._config = configparser.ConfigParser()
@@ -151,7 +152,7 @@ CPU architecture:  {self.cpu_arch()}
                 self.FIRMWARE
         ]:
             if not self._config.has_option(self.DEFAULT, setting):
-                print(
+                Log.log(
                     f'Missing section "{setting}". Please fill the '
                     f'{self._config_file} or provide a "--{setting}" parameter'
                 )

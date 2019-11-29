@@ -42,12 +42,10 @@ def run_python_module_log_output(name, module_path, tools_dir):
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
                 module.setup(tools_dir)
+            Log.log(output.getvalue())
         except Exception as e:
-            print(output.getvalue())
             Log.log(e)
             raise
-        else:
-            Log.log(output.getvalue())
 
     else:
         raise Exception(
@@ -70,7 +68,7 @@ def run_process_log_output(params):
     Log.log(log)
 
     if process.poll() != 0:
-        print(log)
-        raise Exception(f"Failed to run {params}")
+        raise Exception(
+            f"Command '{' '.join(params)}' exited with code {process.poll()}")
 
     return process.poll() == 0

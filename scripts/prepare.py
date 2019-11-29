@@ -4,6 +4,7 @@ import re
 import shutil
 import os
 import os.path as Path
+from log import Log
 
 
 class RequirementsManager:
@@ -104,10 +105,13 @@ class RequirementsManager:
             return self._verify_python_dep(to_check, dep["version"])
 
     def _build_deps_and_run_install(self, params, deps, noun, config):
+        Log.log(f"Installing {noun} dependencies...")
         if len(deps) == 0:
+            Log.log("Nothing to install")
             return
         for dep in deps:
             if config.is_local_tool(dep["name"]):
+                Log.log(f"Using local configuration of {dep['name']}")
                 self._install_local_tool(dep, config)
                 continue
 
@@ -119,13 +123,14 @@ class RequirementsManager:
                 params.append(dep["name"])
 
         if len(params) == 0:
+            Log.log("Nothing to install")
             # nothing to install
             return
 
         if utils.run_process_log_output(params):
-            print(f"Succesfully installed {noun} dependencies")
+            Log.log(f"Succesfully installed {noun} dependencies")
         else:
-            print(
+            Log.log(
                 f"There was an error installing {noun} packages, see the log")
 
     def install(self, config):
