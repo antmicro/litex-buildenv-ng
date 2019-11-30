@@ -1,4 +1,4 @@
-# litex-buildenv-ng
+# LiteX BuildEnv NG (working title)
 
 This project is intended to supersede [the original LiteX BuildEnv](https://github.com/timvideos/litex-buildenv).
 
