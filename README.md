@@ -8,6 +8,12 @@ The tool can be used in a similar way to the original LiteX BuildEnv: to prepare
 
 More documentation is obviously on its way.
 
+## Conda-packaged compiler toolchains
+
+LiteX BuildEnv (NG) requires toolchains for various architectures to work. These have been pre-built into Conda packages for convenience, and can be found in the [Antmicro Conda channel on Anaconda Cloud](https://anaconda.org/antmicro).
+
+Scripts for building the Conda packages and instructions how to execute them can be found in [the dedicated conda-toolchains repository](https://github.com/antmicro/conda-toolchains).
+
 ## Dockerized dependency feature
 
 One of the new features of the "NG" version of LBE is the ability to deliver dockerized dependencies locally instead of downloading and building them.
