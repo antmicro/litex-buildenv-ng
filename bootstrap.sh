@@ -72,36 +72,22 @@ then
     export PATH=$BUILDENV_LOCAL_TOOLS:$CONDA_DIR/bin:$PATH:/sbin
 fi
 
-function pin_conda_package {
-	CONDA_PACKAGE_NAME=$1
-	CONDA_PACKAGE_VERSION=$2
-	echo "Pinning ${CONDA_PACKAGE_NAME} to ${CONDA_PACKAGE_VERSION}"
-	CONDA_PIN_FILE=$CONDA_DIR/conda-meta/pinned
-	CONDA_PIN_TMP=$CONDA_DIR/conda-meta/pinned.tmp
-	touch ${CONDA_PIN_FILE}
-	cat ${CONDA_PIN_FILE} | grep -v ${CONDA_PACKAGE_NAME} > ${CONDA_PIN_TMP} || true
-	echo "${CONDA_PACKAGE_NAME} ==${CONDA_PACKAGE_VERSION}" >> ${CONDA_PIN_TMP}
-	cat ${CONDA_PIN_TMP} | sort > ${CONDA_PIN_FILE}
-}
-
 # Install and setup conda for downloading packages
 (
 	echo
 	echo "Installing conda (self contained Python environment with binary package support)"
 	if [[ ! -e $CONDA_DIR/bin/conda ]]; then
 		cd $BUILD_DIR
-		# FIXME: Get the miniconda people to add a "self check" mode
-		wget --continue https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-		chmod a+x Miniconda3-latest-Linux-x86_64.sh
-		# -p to specify the install location
-		# -b to enable batch mode (no prompts)
-		# -f to not return an error if the location specified by -p already exists
+		wget --continue https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
+		chmod a+x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 		(
 			export HOME=$CONDA_DIR
-			./Miniconda3-latest-Linux-x86_64.sh -p $CONDA_DIR -b -f || exit 1
+                        # -p to specify the install location
+                        # -b to enable batch mode (no prompts)
+                        # -f to not return an error if the location already exists
+			./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -p $CONDA_DIR -b -f || exit 1
 		)
-                pin_conda_package python ${PYTHON_VERSION}
-                conda install -y $CONDA_FLAGS python
+                conda install -y $CONDA_FLAGS python==$PYTHON_VERSION
 	fi
     echo "Conda environment ready"
 

@@ -75,7 +75,7 @@ def version_equal(tool, desired_version):
 def pin_conda_package(name, version):
     print(f"Pinning {name} to {version}")
     conda_pin_file = CONDA_DIR + '/conda-meta/pinned'
-    pin = f"{name} =={version}\n"
+    pin = f"{name} =={version}"
     if not os.path.exists(conda_pin_file):
         with open(conda_pin_file, 'w') as outfile:
             outfile.write(pin)
@@ -89,7 +89,7 @@ def pin_conda_package(name, version):
                 found = True
                 break
         if not found:
-            pinned.append(pin)
+            pinned.insert(0, pin)
         with open(conda_pin_file, 'w') as outfile:
             outfile.write("\n".join(pinned))
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         os.environ.get("HDMI2USB_UDEV_IGNORE") != None :
             pass
         else:
-            print("\tPlease install the HDMI2USB udev rules, or "export HDMI2USB_UDEV_IGNORE=somevalue" to ignore this." \
+            print("\tPlease install the HDMI2USB udev rules, or 'export HDMI2USB_UDEV_IGNORE=somevalue' to ignore this." \
                 "\tFor installation instructions, please see https://github.com/timvideos/litex-buildenv/wiki/HowTo-LCA2018-FPGA-Miniconf#download--setup-udev-rules")
             exit(1)
 
@@ -128,19 +128,23 @@ if __name__ == "__main__":
     CONDA_DIR = os.environ.get("CONDA_DIR")
     PYTHON_VERSION = os.environ.get("PYTHON_VERSION")
     CONDA_VERSION = os.environ.get("CONDA_VERSION")
+
     if not version_equal('python', PYTHON_VERSION):
         exit(1)
 
 
     fix_conda()
+    pin_conda_package('python', PYTHON_VERSION)
     process_call(f"conda config --system --add envs_dirs {CONDA_DIR}/envs")
     process_call(f"conda config --system --add pkgs_dirs {CONDA_DIR}/pkgs")
     process_call("conda config --system --set always_yes yes")
     process_call("conda config --system --set changeps1 no")
     pin_conda_package('conda', CONDA_VERSION)
     process_call("conda update -q conda")
+
     if not version_equal('conda', CONDA_VERSION):
         exit(1)
+
     fix_conda()
     process_call("conda config --system --add channels timvideos")
     process_call("conda info")
