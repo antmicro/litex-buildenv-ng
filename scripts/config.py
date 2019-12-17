@@ -111,6 +111,41 @@ CPU architecture:  {self.cpu_arch()}
         else:
             self._build_dir = None
 
+        if "FIRMWARE_URL" in os.environ.keys():
+            self._firmware_url = os.environ["FIRMWARE_URL"]
+        else:
+            self._firmware_url = None
+
+        if "FIRMWARE_BRANCH" in os.environ.keys():
+            self._firmware_branch = os.environ["FIRMWARE_BRANCH"]
+        else:
+            self._firmware_branch = None
+
+        if "ROOTFS_URL" in os.environ.keys():
+            self._rootfs_url = os.environ["ROOTFS_URL"]
+        else:
+            self._rootfs_url = None
+
+        if "DTB_URL" in os.environ.keys():
+            self._dtb_url = os.environ["DTB_URL"]
+        else:
+            self._dtb_url = None
+
+        if "BUILDROOT_URL" in os.environ.keys():
+            self._buildroot_url = os.environ["BUILDROOT_URL"]
+        else:
+            self._buildroot_url = None
+
+        if "LLV_URL" in os.environ.keys():
+            self._llv_url = os.environ["LLV_URL"]
+        else:
+            self._llv_url = None
+
+        if "BUILD_BUILDROOT" in os.environ.keys():
+            self._build_buildroot = os.environ["BUILD_BUILDROOT"]
+        else:
+            self._build_buildroot = None
+
         self._base_path = Path.abspath(
             Path.join(Path.dirname(Path.abspath(__file__)), ".."))
         self._config_file = self.__get_config_file(name)
