@@ -39,16 +39,15 @@ fi
 
 export BUILD_DIR=$TOP_DIR/build
 export THIRD_DIR=$TOP_DIR/third_party
-export CONDA_DIR=$BUILD_DIR/conda
 export BUILDENV_LOCAL_TOOLS=$BUILD_DIR/bin
 export BUILDENV_BUILD_LOG=$BUILD_DIR/build.log
 
+# If we activate an environment, CONDA_PREFIX is set. Otherwise use CONDA_DIR.
+export CONDA_PREFIX="${CONDA_PREFIX:-$BUILD_DIR/conda}"
+export CONDA_DIR=$CONDA_PREFIX
+
 export CONDA_VERSION=4.7.10
 export PYTHON_VERSION=3.7
-
-# If we activate an environment, CONDA_PREFIX is set. Otherwise use CONDA_DIR.
-export CONDA_PREFIX="${CONDA_PREFIX:-$CONDA_DIR}"
-export CONDA_DIR=$CONDA_PREFIX
 
 echo "             This script is: $SETUP_SRC"
 echo "         Firmware directory: $TOP_DIR"
