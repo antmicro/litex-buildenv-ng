@@ -20,7 +20,9 @@ class ConfigManager(Singleton):
     CPU_VARIANT = "cpu-variant"
     PLATFORM = "platform"
     TARGET = "target"
+    SOC_VARIANT = "soc-variant"
     FIRMWARE = "firmware"
+    SOC_VARIANTS = ['base', 'net', 'usb']
 
     def __get_config_file(self, name):
         return Path.join(self._base_path, name + ".env")
@@ -39,6 +41,9 @@ class ConfigManager(Singleton):
 
     def target(self):
         return self._config[self.DEFAULT][self.TARGET]
+
+    def soc_variant(self):
+        return self._config[self.DEFAULT][self.SOC_VARIANT]
 
     def firmware(self):
         return self._config[self.DEFAULT][self.FIRMWARE]
@@ -60,7 +65,8 @@ class ConfigManager(Singleton):
 
     def get_all_parameters(self):
         return (self.cpu(), self.cpu_arch(), self.cpu_variant(),
-                self.platform(), self.target(), self.firmware())
+                self.platform(), self.target(), self.soc_variant(),
+                self.firmware())
 
     def get_local_tools(self):
         return [
@@ -88,13 +94,14 @@ CPU architecture:  {self.cpu_arch()}
      CPU variant:  {self.cpu_variant()}
         Platform:  {self.platform()}
           Target:  {self.target()}
+     SoC variant:  {self.soc_variant()}
         Firmware:  {self.firmware()}
         ''')
 
     def __init__(self):
         Singleton.__init__(self)
 
-    def init(self, name, cpu, cpu_variant, platform, target, firmware):
+    def init(self, name, cpu, cpu_variant, platform, target, soc_variant, firmware):
 
         if "CONDA_FLAGS" in os.environ.keys():
             self._conda_flags = os.environ["CONDA_FLAGS"]
@@ -110,41 +117,6 @@ CPU architecture:  {self.cpu_arch()}
             self._build_dir = os.environ["BUILD_DIR"]
         else:
             self._build_dir = None
-
-        if "FIRMWARE_URL" in os.environ.keys():
-            self._firmware_url = os.environ["FIRMWARE_URL"]
-        else:
-            self._firmware_url = None
-
-        if "FIRMWARE_BRANCH" in os.environ.keys():
-            self._firmware_branch = os.environ["FIRMWARE_BRANCH"]
-        else:
-            self._firmware_branch = None
-
-        if "ROOTFS_URL" in os.environ.keys():
-            self._rootfs_url = os.environ["ROOTFS_URL"]
-        else:
-            self._rootfs_url = None
-
-        if "DTB_URL" in os.environ.keys():
-            self._dtb_url = os.environ["DTB_URL"]
-        else:
-            self._dtb_url = None
-
-        if "BUILDROOT_URL" in os.environ.keys():
-            self._buildroot_url = os.environ["BUILDROOT_URL"]
-        else:
-            self._buildroot_url = None
-
-        if "LLV_URL" in os.environ.keys():
-            self._llv_url = os.environ["LLV_URL"]
-        else:
-            self._llv_url = None
-
-        if "BUILD_BUILDROOT" in os.environ.keys():
-            self._build_buildroot = os.environ["BUILD_BUILDROOT"]
-        else:
-            self._build_buildroot = None
 
         self._base_path = Path.abspath(
             Path.join(Path.dirname(Path.abspath(__file__)), ".."))
@@ -167,6 +139,8 @@ CPU architecture:  {self.cpu_arch()}
         if not self._config.has_section(self.DEFAULT):
             self._config.add_section(self.DEFAULT)
 
+        self._default_section = self.DEFAULT
+
         if cpu:
             self._config[self.DEFAULT][self.CPU] = cpu
 
@@ -179,12 +153,18 @@ CPU architecture:  {self.cpu_arch()}
         if target:
             self._config[self.DEFAULT][self.TARGET] = target
 
+        if soc_variant:
+            self._config[self.DEFAULT][self.SOC_VARIANT] = soc_variant
+
+        if soc_variant not in self.SOC_VARIANTS:
+            raise Exception(f"Unsupported SoC variant! Available: {self.SOC_VARIANTS}")
+
         if firmware:
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
 
         for setting in [
                 self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET,
-                self.FIRMWARE
+                self.SOC_VARIANT, self.FIRMWARE
         ]:
             if not self._config.has_option(self.DEFAULT, setting):
                 Log.log(

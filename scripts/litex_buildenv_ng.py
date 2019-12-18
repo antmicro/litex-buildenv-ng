@@ -12,7 +12,7 @@ from firmware import firmware
 def init_config(args):
     cfg = config.ConfigManager()
     cfg.init(args.env, args.cpu, args.cpu_variant, args.platform, args.target,
-             args.firmware)
+             args.soc_variant, args.firmware)
 
 
 if __name__ == '__main__':
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument("--cpu-variant", help="cpu variant")
     parser.add_argument("--platform", help="platform name")
     parser.add_argument("--target", help="setup type")
+    parser.add_argument("--soc-variant", help="soc variant")
     parser.add_argument("--firmware", help="target firmware")
     parser.add_argument("--trace",
                         action="store_true",
