@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import os.path as Path
 
 from litex.build.tools import write_to_file
 from litex.soc.integration.soc_sdram import *
@@ -12,7 +13,6 @@ target_soc = {
     "net": "Ethernet",
     "usb": "USB",
 }
-
 
 def get_args(parser, platform='opsis', target='hdmi2usb'):
     parser.add_argument("--platform", action="store", default=str())
@@ -44,12 +44,13 @@ def get_builddir(args):
     full_cpu = args.cpu_type
     if args.cpu_variant:
         full_cpu = "{}.{}".format(full_cpu, args.cpu_variant)
-    return "build/{}_{}_{}/".format(full_platform.lower(), args.target.lower(), full_cpu.lower())
+    path = Path.join(os.getcwd(), 'build', f'{full_platform.lower()}_{args.target.lower()}_{full_cpu.lower()}')
+    return path
 
 
 def get_testdir(args):
     builddir = get_builddir(args)
-    testdir = "{}/test".format(builddir)
+    testdir = Path.join(builddir, 'test')
     return testdir
 
 
@@ -147,16 +148,16 @@ def main():
 
         builder = Builder(soc, **buildargs)
         if not args.no_compile_firmware or args.override_firmware:
-            builder.add_software_package("uip", "{}/firmware/uip".format(os.getcwd()))
+            builder.add_software_package("uip", Path.join(os.getcwd(), 'firmware', 'uip'))
 
             # FIXME: All platforms which current run their user programs from
             # SPI flash lack the block RAM resources to run the default
             # firmware. Check whether to use the stub or default firmware
             # should be refined (perhaps soc attribute?).
             if "main_ram" in soc.mem_regions:
-                builder.add_software_package("firmware", "{}/firmware".format(os.getcwd()))
+                builder.add_software_package("firmware", Path.join(os.getcwd(), 'firmware'))
             else:
-                builder.add_software_package("stub", "{}/firmware/stub".format(os.getcwd()))
+                builder.add_software_package("stub", Path.join(os.getcwd(), 'firmware', 'stub'))
         vns = builder.build(**dict(args.build_option))
     else:
         vns = platform.build(soc, build_dir=os.path.join(builddir, "gateware"))
@@ -169,7 +170,7 @@ def main():
         write_to_file(os.path.join(kerneldir, "csr.h"), csr_header)
 
     if hasattr(soc, 'do_exit'):
-        soc.do_exit(vns, filename="{}/analyzer.csv".format(testdir))
+        soc.do_exit(vns, filename=Path.join(testdir, 'analyzer.csv'))
 
 
 if __name__ == "__main__":

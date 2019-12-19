@@ -68,17 +68,48 @@ class FirmwareManager:
         'firmware-branch': None,
     }
 
+    BUILD_FIRMWARE_DEFAULT = {
+        'tftp-iprange': '192.168.100',
+        'misoc-extra-cmdline': list(),
+        'litex-extra-cmdline': list(),
+        'make-litex-extra-cmdline': list()
+    }
+
     # This builds low-level firmware and sets up LiteX stuff in build dir
     def build_firmware(self):
-        os.system(f'make.py --platform {self.cfg.platform()} \
-            --target {self.cfg.platform()} \
-            --cpu-type {self.cfg.cpu()} \
-            --iprange {self.cfg._tftp_iprange} \
-            {self.cfg._misoc_extra_cmdline} \
-            {self.cfg._litex_extra_cmdline} \
-            {self.cfg._make_litex_extra_cmdline} \
-            --no-compile-gateware'
-        )
+        for opt in self.BUILD_FIRMWARE_DEFAULT.keys():
+            if opt not in self.cfg._config[self.cfg._default_section].keys():
+                self.ADDITIONAL_OPT[opt] = self.BUILD_FIRMWARE_DEFAULT[opt]
+            else:
+                self.ADDITIONAL_OPT[opt] = self.cfg._config[self.cfg._default_section][opt]
+
+        arg_list = ['python', 'scripts/make.py',
+            '--platform',
+            self.cfg.platform(),
+            '--target',
+            self.cfg.platform(),
+            '--cpu-type',
+            self.cfg.cpu(),
+            '--soc-variant',
+            self.cfg.soc_variant(),
+            '--iprange',
+            self.ADDITIONAL_OPT["tftp-iprange"],
+            '--no-compile-gateware',
+        ]
+        if len(self.ADDITIONAL_OPT["misoc-extra-cmdline"]) > 1:
+            arg_list.append('-Op')
+            for arg in self.ADDITIONAL_OPT["misoc-extra-cmdline"]:
+                arg_list.append(arg)
+        if len(self.ADDITIONAL_OPT["litex-extra-cmdline"]) > 1:
+            arg_list.append('-Ot')
+            for arg in self.ADDITIONAL_OPT["litex-extra-cmdline"]:
+                arg_list.append(arg)
+        if len(self.ADDITIONAL_OPT["make-litex-extra-cmdline"]) > 1:
+            arg_list.append('-Ob')
+            for arg in self.ADDITIONAL_OPT["make-litex-extra-cmdline"]:
+                arg_list.append(arg)
+
+        subprocess.check_call(arg_list)
 
     def build_linux(self):
         self.LINUX_DIR = Path.join(self.target_dir, self.THIRD_PARTY_DIR, 'linux')
@@ -110,7 +141,7 @@ class FirmwareManager:
 
         os.environ["CROSS_COMPILE"] = self.cfg.cpu_arch() + "-linux-musl-"
 
-        for opt in self.ADDITIONAL_OPT.keys():
+        for opt in self.LINUX_DEFAULT.keys():
             if opt not in self.cfg._config[self.cfg._default_section].keys():
                 if self.firmware_target in self.LINUX_DEFAULT[opt].keys():
                     print(f"No {opt} provided. Using default: {self.LINUX_DEFAULT[opt][self.firmware_target]}")
@@ -201,6 +232,7 @@ class FirmwareManager:
             'dtb-url': str(),
             'buildroot-url': str(),
             'llv-url': str(),
+            'tftp-iprange': '192.168.100'
         }
 
         for opt in self.FIRMWARE_OPT:
@@ -238,6 +270,6 @@ def firmware():
     fm = FirmwareManager(cfg.firmware(), cfg)
 
     # Build low-level firmware and LiteX related stuff
-    # fm.build_firmware()
+    fm.build_firmware()
     # Build target software (Linux, Zephyr, FuPy etc.)
     fm.run()

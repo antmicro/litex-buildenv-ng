@@ -22,7 +22,6 @@ class ConfigManager(Singleton):
     TARGET = "target"
     SOC_VARIANT = "soc-variant"
     FIRMWARE = "firmware"
-    SOC_VARIANTS = ['base', 'net', 'usb']
 
     def __get_config_file(self, name):
         return Path.join(self._base_path, name + ".env")
@@ -149,15 +148,14 @@ CPU architecture:  {self.cpu_arch()}
 
         if platform:
             self._config[self.DEFAULT][self.PLATFORM] = platform
+            os.environ['PLATFORM'] = platform
 
         if target:
             self._config[self.DEFAULT][self.TARGET] = target
+            os.environ['TARGET'] = target
 
         if soc_variant:
             self._config[self.DEFAULT][self.SOC_VARIANT] = soc_variant
-
-        if soc_variant not in self.SOC_VARIANTS:
-            raise Exception(f"Unsupported SoC variant! Available: {self.SOC_VARIANTS}")
 
         if firmware:
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
