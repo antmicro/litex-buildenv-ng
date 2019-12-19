@@ -128,19 +128,21 @@ if __name__ == "__main__":
     CONDA_DIR = os.environ.get("CONDA_DIR")
     PYTHON_VERSION = os.environ.get("PYTHON_VERSION")
     CONDA_VERSION = os.environ.get("CONDA_VERSION")
-
-    if not version_equal('python', PYTHON_VERSION):
-        exit(1)
-
-
+    print("               Pinning conda packages")
+    print("---------------------------------------------------")
     fix_conda()
+    pin_conda_package('conda', CONDA_VERSION)
     pin_conda_package('python', PYTHON_VERSION)
+    print("                 Configuring conda")
+    print("---------------------------------------------------")
     process_call(f"conda config --system --add envs_dirs {CONDA_DIR}/envs")
     process_call(f"conda config --system --add pkgs_dirs {CONDA_DIR}/pkgs")
     process_call("conda config --system --set always_yes yes")
     process_call("conda config --system --set changeps1 no")
-    pin_conda_package('conda', CONDA_VERSION)
     process_call("conda update -q conda")
+
+    if not version_equal('python', PYTHON_VERSION):
+        exit(1)
 
     if not version_equal('conda', CONDA_VERSION):
         exit(1)
@@ -148,6 +150,8 @@ if __name__ == "__main__":
     fix_conda()
     process_call("conda config --system --add channels timvideos")
     process_call("conda info")
+    print("           Installing python argh package")
+    print("---------------------------------------------------")
     process_call("python -m pip install --upgrade argh")
 
 
