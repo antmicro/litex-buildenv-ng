@@ -17,13 +17,13 @@ SET PYTHON_VERSION=3.7
 
 DIR %TOP_DIR% >>nul || GOTO PATH_FAIL
 
-ECHO --------------------------------------
+ECHO ---------------------------------------------------
 ECHO      Firmware directory: %TOP_DIR%
 ECHO      Build directory is: %BUILD_DIR%
 ECHO  3rd party directory is: %THIRD_DIR%
-ECHO --------------------------------------
-ECHO        Initializing environment
-ECHO --------------------------------------
+ECHO ---------------------------------------------------
+ECHO             Initializing environment
+ECHO ---------------------------------------------------
 
 IF NOT EXIST %BUILDENV_LOCAL_TOOLS% (
 	MD %BUILDENV_LOCAL_TOOLS%
@@ -43,23 +43,23 @@ SET CONDA_DEST=Miniconda3.exe
 
 IF NOT EXIST %CONDA_DIR% (
     CD %BUILD_DIR%
-	ECHO           Downloading conda
-	ECHO --------------------------------------
+	ECHO                 Downloading conda
+	ECHO ---------------------------------------------------
     powershell /Command "(New-Object System.Net.WebClient).DownloadFile('%CONDA_URI%','%CONDA_DEST%')"
     REM  /D to specify the installation path
     REM  /S to install in silent mode
-	ECHO           Installing conda             This may take few minutes. Please wait...
-	ECHO --------------------------------------
+	ECHO                  Installing conda                     This may take few minutes. Please wait...
+	ECHO ---------------------------------------------------
 	START /wait "" Miniconda3.exe /S /D=%CONDA_DIR% || GOTO:EOF
 	CD ..
 )
-ECHO          Call conda activate
-ECHO --------------------------------------
+ECHO                 Call conda activate
+ECHO ---------------------------------------------------
 CALL "%CONDA_DIR%\Scripts\activate"
 
 python scripts/bootstrap.py
-ECHO bootstrap.py finished, starting litex_buildenv_ng.py
-ECHO --------------------------------------
+ECHO  Bootstrap finished, starting litex_buildenv_ng.py
+ECHO ---------------------------------------------------
 python scripts/litex_buildenv_ng.py
 
 GOTO:EOF
