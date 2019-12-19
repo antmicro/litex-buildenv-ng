@@ -57,15 +57,6 @@ ECHO          Call conda activate
 ECHO --------------------------------------
 CALL "%CONDA_DIR%\Scripts\activate"
 
-IF NOT EXIST %CONDA_DIR%\python.exe (
-    ECHO    Installing python version %PYTHON_VERSION%
-    ECHO --------------------------------------
-    conda install -y %CONDA_FLAGS% python==%PYTHON_VERSION% || GOTO:EOF
-)
-ECHO --------------------------------------
-ECHO Bootstrap batch finished, starting bootstrap.py
-ECHO --------------------------------------
-
 python scripts/bootstrap.py
 ECHO bootstrap.py finished, starting litex_buildenv_ng.py
 ECHO --------------------------------------
