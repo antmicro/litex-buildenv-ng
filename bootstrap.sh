@@ -24,14 +24,14 @@ if [ $SOURCED = 0 ]; then
 fi
 
 # Conda does not support ' ' in the path (it bails early).
-if echo "${SETUP_DIR}" | grep -q ' '; then
+if echo "${TOP_DIR}" | grep -q ' '; then
 	echo "You appear to have whitespace characters in the path to this script."
 	echo "Please move this repository to another path that does not contain whitespace."
 	return 1
 fi
 
 # Conda does not support ':' in the path (it fails to install python).
-if echo "${SETUP_DIR}" | grep -q ':'; then
+if echo "${TOP_DIR}" | grep -q ':'; then
 	echo "You appear to have ':' characters in the path to this script."
 	echo "Please move this repository to another path that does not contain this character."
 	return 1
@@ -49,14 +49,14 @@ export CONDA_DIR=$CONDA_PREFIX
 export CONDA_VERSION=4.7.10
 export PYTHON_VERSION=3.7
 
-echo "             This script is: $SETUP_SRC"
-echo "         Firmware directory: $TOP_DIR"
-echo "         Build directory is: $BUILD_DIR"
-echo "     3rd party directory is: $THIRD_DIR"
+echo "---------------------------------------------------"
+echo "     Firmware directory: $TOP_DIR"
+echo "     Build directory is: $BUILD_DIR"
+echo " 3rd party directory is: $THIRD_DIR"
 
-echo ""
-echo "Initializing environment"
-echo "---------------------------------"
+echo "---------------------------------------------------"
+echo "             Initializing environment"
+echo "---------------------------------------------------"
 
 mkdir -p $BUILDENV_LOCAL_TOOLS
 
@@ -71,27 +71,25 @@ then
     export PATH=$BUILDENV_LOCAL_TOOLS:$CONDA_DIR/bin:$PATH:/sbin
 fi
 
-# Install and setup conda for downloading packages
+# Install conda for downloading packages
 (
-	echo
-	echo "Installing conda (self contained Python environment with binary package support)"
 	if [[ ! -e $CONDA_DIR/bin/conda ]]; then
 		cd $BUILD_DIR
+        echo "                Downloading conda"
+        echo "---------------------------------------------------"
 		wget --continue https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 		chmod a+x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
-		(
-			export HOME=$CONDA_DIR
-                        # -p to specify the install location
-                        # -b to enable batch mode (no prompts)
-                        # -f to not return an error if the location already exists
-			./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -p $CONDA_DIR -b -f || exit 1
-		)
+        echo "                 Installing conda"
+        echo "---------------------------------------------------"
+        # -p to specify the install location
+        # -b to enable batch mode (no prompts)
+        # -f to not return an error if the location already exists
+        ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -p $CONDA_DIR -b -f || exit 1
+        cd ..
 	fi
-    echo "Conda environment ready"
-
 )
 
-echo "Bootstrap bash finished, staring bootstrap.py"
-
-python3 scripts/bootstrap.py
-#$@ prepare
+python3 scripts/bootstrap.py 
+echo " Bootstrap finished, staring litex_buildenv_ng.py"
+echo "---------------------------------------------------"
+python3 scripts/litex_buildenv_ng.py $@ prepare
