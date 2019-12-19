@@ -71,20 +71,26 @@ then
     export PATH=$BUILDENV_LOCAL_TOOLS:$CONDA_DIR/bin:$PATH:/sbin
 fi
 
+if [ "$(uname)" == "Linux" ] ; then
+    CONDA_INSTALLER=Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
+else
+    CONDA_INSTALLER=Miniconda3-${CONDA_VERSION}-MacOSX-x86_64.sh
+fi
+
 # Install conda for downloading packages
 (
 	if [[ ! -e $CONDA_DIR/bin/conda ]]; then
 		cd $BUILD_DIR
         echo "                Downloading conda"
         echo "---------------------------------------------------"
-		wget --continue https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
-		chmod a+x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
+		wget --continue https://repo.continuum.io/miniconda/$CONDA_INSTALLER
+		chmod a+x $CONDA_INSTALLER
         echo "                 Installing conda"
         echo "---------------------------------------------------"
         # -p to specify the install location
         # -b to enable batch mode (no prompts)
         # -f to not return an error if the location already exists
-        ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -p $CONDA_DIR -b -f || exit 1
+        ./$CONDA_INSTALLER -p $CONDA_DIR -b -f || exit 1
         cd ..
 	fi
 )
