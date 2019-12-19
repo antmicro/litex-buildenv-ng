@@ -1,8 +1,10 @@
 import config
+import sys
 import os
 import os.path as Path
 import git
 import wget
+import re
 import subprocess
 # from log import Log
 
@@ -68,11 +70,9 @@ class FirmwareManager:
         'firmware-branch': None,
     }
 
+    # Build low-level firmware + LiteX defaults:
     BUILD_FIRMWARE_DEFAULT = {
         'tftp-iprange': '192.168.100',
-        'misoc-extra-cmdline': list(),
-        'litex-extra-cmdline': list(),
-        'make-litex-extra-cmdline': list()
     }
 
     # This builds low-level firmware and sets up LiteX stuff in build dir
@@ -90,23 +90,24 @@ class FirmwareManager:
             self.cfg.platform(),
             '--cpu-type',
             self.cfg.cpu(),
-            '--soc-variant',
-            self.cfg.soc_variant(),
             '--iprange',
             self.ADDITIONAL_OPT["tftp-iprange"],
+            '--cpu-variant',
+            self.cfg.cpu_variant(),
             '--no-compile-gateware',
         ]
-        if len(self.ADDITIONAL_OPT["misoc-extra-cmdline"]) > 1:
+
+        if len(self.ADDITIONAL_OPT["platform-option"]) > 1:
             arg_list.append('-Op')
-            for arg in self.ADDITIONAL_OPT["misoc-extra-cmdline"]:
+            for arg in self.ADDITIONAL_OPT["platform-option"]:
                 arg_list.append(arg)
-        if len(self.ADDITIONAL_OPT["litex-extra-cmdline"]) > 1:
+        if len(self.ADDITIONAL_OPT["target-option"]) > 1:
             arg_list.append('-Ot')
-            for arg in self.ADDITIONAL_OPT["litex-extra-cmdline"]:
+            for arg in self.ADDITIONAL_OPT["target-option"]:
                 arg_list.append(arg)
-        if len(self.ADDITIONAL_OPT["make-litex-extra-cmdline"]) > 1:
+        if len(self.ADDITIONAL_OPT["build-option"]) > 1:
             arg_list.append('-Ob')
-            for arg in self.ADDITIONAL_OPT["make-litex-extra-cmdline"]:
+            for arg in self.ADDITIONAL_OPT["build-option"]:
                 arg_list.append(arg)
 
         subprocess.check_call(arg_list)
@@ -152,6 +153,33 @@ class FirmwareManager:
             else:
                 self.ADDITIONAL_OPT[opt] = self.cfg._config[self.cfg._default_section][opt]
 
+        # VexRiscv Emulator
+        if self.cfg.cpu() == "vexriscv":
+            f = open(Path.join(self.target_dir, 'software', 'include', 'generated', 'mem.h'), 'r')
+            insides = f.read()
+            f.close()
+            emulator_ram_base = re.search('EMULATOR_RAM_BASE.*', insides).group().split(' ')[0][0:-1]
+            main_ram_base = re.search('MAIN_RAM_BASE.*', insides).group().split(' ')[0][0:-1]
+
+            emulator_dir = Path.join(os.getcwd(), 'third_party', 'litex',
+                'litex', 'soc', 'cores', 'cpu', 'vexriscv', 'verilog', 'ext',
+                'VexRiscv', 'src', 'main', 'c', 'emulator')
+            emulator_mk = Path.join(emulator_dir, 'makefile')
+
+            os.environ['CFLAGS'] = f"-DDTB={main_ram_base + 0x01000000} -Wl,--defsym,__ram_origin={emulator_ram_base}"
+            os.environ['LITEX_BASE'] = self.target_dir
+            os.environ['RISCV_BIN'] = f'{self.cfg.cpu_arch()}-elf-newlib-'
+
+            subprocess.check_call(['make', 'clean', '-C', emulator_dir, '-f', f'{emulator_mk}'])
+            subprocess.check_call(['make', 'litex', '-C', emulator_dir, '-f', f'{emulator_mk}'])
+
+            # Should call `make firmware` equivalent
+            # Should call `make clean` equivalent
+            # Should call `make litex` equivalent
+            # Should copy `emulator.bin` to EMULATOR_BUILD_DIR
+
+        sys.exit(0)
+
         # Download data
         if not os.path.exists(self.LINUX_DIR):
             print(f"Cloning into {self.LINUX_DIR} ...")
@@ -169,16 +197,9 @@ class FirmwareManager:
             git.Repo.clone_from(self.ADDITIONAL_OPT['llv-url'],
                 self.LLV_DIR, progress=Progress())
 
-        # VexRiscv Emulator
-        if self.cfg.cpu() == "vexriscv":
-            print("Should build VexRiscV emulator")
-            # Should call `make firmware` equivalent
-            # Should call `make clean` equivalent
-            # Should call `make litex` equivalent
-            # Should copy `emulator.bin` to EMULATOR_BUILD_DIR
 
         if self.cfg.cpu() == "vexriscv" and 'buildroot' in self.firmware_target:
-            print("Vex + Buildroot")
+            print("Linux-Buildroot")
         else:
             print("Linux-LiteX")
             wget.download(self.ADDITIONAL_OPT['rootfs-url'], self.LINUX_DIR)
@@ -232,7 +253,10 @@ class FirmwareManager:
             'dtb-url': str(),
             'buildroot-url': str(),
             'llv-url': str(),
-            'tftp-iprange': '192.168.100'
+            'tftp-iprange': str(),
+            'platform-option': list(),
+            'target-option': list(),
+            'build-option': list(),
         }
 
         for opt in self.FIRMWARE_OPT:
@@ -251,6 +275,8 @@ class FirmwareManager:
 
         self.cfg = cfg
 
+        assert self.cfg.cpu_variant() is not None
+
         # Base firmware_target
         self.firmware_target = f"{self.firmware}-{self.cfg.cpu()}"
 
@@ -258,8 +284,12 @@ class FirmwareManager:
             if self.cfg._config[self.cfg._default_section]['buildroot'] == 'yes':
                 self.firmware_target += "-buildroot"
 
+        full_cpu = self.cfg.cpu()
+        if self.cfg.cpu_variant():
+            full_cpu = f'{full_cpu}.{self.cfg.cpu_variant()}'
+
         self.target_dir = Path.join(self.cfg._build_dir,
-            f'{self.cfg.platform()}_{self.cfg.target()}_{self.cfg.cpu()}'
+            f'{self.cfg.platform()}_{self.cfg.target()}_{full_cpu}'
         )
 
         self.THIRD_PARTY_DIR = Path.join(self.target_dir, 'third_party')

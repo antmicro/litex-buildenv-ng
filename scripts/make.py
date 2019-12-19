@@ -17,7 +17,6 @@ target_soc = {
 def get_args(parser, platform='opsis', target='hdmi2usb'):
     parser.add_argument("--platform", action="store", default=str())
     parser.add_argument("--target", action="store", default=str())
-    parser.add_argument("--soc-variant", action="store", default=str())
 
     soc_sdram_args(parser)
     parser.set_defaults(cpu_type=os.environ.get('CPU', 'lm32'))
@@ -62,8 +61,8 @@ def get_platform(args):
 
 def get_soc(args, platform):
     assert args.platform is not None
-    exec("from litex_boards.targets import {}".format(args.target), globals())
-    soc_name = f'{args.target}.{target_soc[args.soc_variant]}'
+    exec("from litex_boards.targets import {}".format(args.platform), globals())
+    soc_name = f'{args.platform}.{target_soc[args.target]}'
     soc = eval(soc_name)(ident=eval(soc_name).__name__, **soc_sdram_argdict(args), **dict(args.target_option))
     if hasattr(soc, 'configure_iprange'):
         soc.configure_iprange(args.iprange)

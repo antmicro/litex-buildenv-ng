@@ -20,7 +20,6 @@ class ConfigManager(Singleton):
     CPU_VARIANT = "cpu-variant"
     PLATFORM = "platform"
     TARGET = "target"
-    SOC_VARIANT = "soc-variant"
     FIRMWARE = "firmware"
 
     def __get_config_file(self, name):
@@ -40,9 +39,6 @@ class ConfigManager(Singleton):
 
     def target(self):
         return self._config[self.DEFAULT][self.TARGET]
-
-    def soc_variant(self):
-        return self._config[self.DEFAULT][self.SOC_VARIANT]
 
     def firmware(self):
         return self._config[self.DEFAULT][self.FIRMWARE]
@@ -64,8 +60,7 @@ class ConfigManager(Singleton):
 
     def get_all_parameters(self):
         return (self.cpu(), self.cpu_arch(), self.cpu_variant(),
-                self.platform(), self.target(), self.soc_variant(),
-                self.firmware())
+                self.platform(), self.target(), self.firmware())
 
     def get_local_tools(self):
         return [
@@ -93,14 +88,13 @@ CPU architecture:  {self.cpu_arch()}
      CPU variant:  {self.cpu_variant()}
         Platform:  {self.platform()}
           Target:  {self.target()}
-     SoC variant:  {self.soc_variant()}
         Firmware:  {self.firmware()}
         ''')
 
     def __init__(self):
         Singleton.__init__(self)
 
-    def init(self, name, cpu, cpu_variant, platform, target, soc_variant, firmware):
+    def init(self, name, cpu, cpu_variant, platform, target, firmware):
 
         if "CONDA_FLAGS" in os.environ.keys():
             self._conda_flags = os.environ["CONDA_FLAGS"]
@@ -154,15 +148,12 @@ CPU architecture:  {self.cpu_arch()}
             self._config[self.DEFAULT][self.TARGET] = target
             os.environ['TARGET'] = target
 
-        if soc_variant:
-            self._config[self.DEFAULT][self.SOC_VARIANT] = soc_variant
-
         if firmware:
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
 
         for setting in [
                 self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET,
-                self.SOC_VARIANT, self.FIRMWARE
+                self.FIRMWARE
         ]:
             if not self._config.has_option(self.DEFAULT, setting):
                 Log.log(
