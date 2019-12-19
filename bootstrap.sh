@@ -86,7 +86,6 @@ fi
                         # -f to not return an error if the location already exists
 			./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -p $CONDA_DIR -b -f || exit 1
 		)
-                conda install -y $CONDA_FLAGS python==$PYTHON_VERSION
 	fi
     echo "Conda environment ready"
 
