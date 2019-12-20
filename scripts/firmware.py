@@ -216,7 +216,7 @@ class FirmwareManager:
             elif self.cfg.cpu() == "vexriscv":
                 os.environ["KERNEL_BINARY"] = "Image"
 
-            p = subprocess.Popen(["time", "make"], cwd=self.LINUX_DIR)
+            p = subprocess.Popen(["time", "make", "-j"], cwd=self.LINUX_DIR)
             p.wait()
             link = Path.join(self.LINUX_DIR, 'arch', os.environ["ARCH"], 'boot', os.environ["KERNEL_BINARY"])
             link_out = os.environ["ARCH"] + "-" + os.environ["KERNEL_BINARY"]
