@@ -153,7 +153,7 @@ class FirmwareManager:
             else:
                 self.ADDITIONAL_OPT[opt] = self.cfg._config[self.cfg._default_section][opt]
 
-        # VexRiscv Emulator
+        # VexRiscv Emulator TODO
         if self.cfg.cpu() == "vexriscv":
             f = open(Path.join(self.target_dir, 'software', 'include', 'generated', 'mem.h'), 'r')
             insides = f.read()
@@ -173,7 +173,6 @@ class FirmwareManager:
             subprocess.check_call(['make', 'clean', '-C', emulator_dir, '-f', f'{emulator_mk}'])
             subprocess.check_call(['make', 'litex', '-C', emulator_dir, '-f', f'{emulator_mk}'])
 
-            # Should call `make firmware` equivalent
             # Should call `make clean` equivalent
             # Should call `make litex` equivalent
             # Should copy `emulator.bin` to EMULATOR_BUILD_DIR
@@ -197,6 +196,7 @@ class FirmwareManager:
 
 
         if self.cfg.cpu() == "vexriscv" and 'buildroot' in self.firmware_target:
+            # TODO
             print("Linux-Buildroot")
         else:
             print("Linux-LiteX")
