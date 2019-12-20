@@ -1,6 +1,13 @@
 @ECHO off
 
-SET TOP_DIR=%~dp0
+SET TOP_DIR=%cd%\
+SET SETUP_SRC_DIR=%~dp0
+SET COPY_FILES=0
+SET INITIALIZE_DIR=0
+IF NOT %TOP_DIR% == %SETUP_SRC_DIR% (
+	SET COPY_FILES=1
+)
+
 SET BUILD_DIR=%TOP_DIR%build
 SET THIRD_DIR=%TOP_DIR%third_party
 SET BUILDENV_LOCAL_TOOLS=%BUILD_DIR%\bin
@@ -15,6 +22,7 @@ SET CONDA_DIR=%CONDA_PREFIX%
 SET CONDA_VERSION=4.7.10
 SET PYTHON_VERSION=3.7
 
+REM Check if path is valid
 DIR %TOP_DIR% >>nul || GOTO PATH_FAIL
 
 ECHO ---------------------------------------------------
@@ -42,25 +50,37 @@ SET CONDA_URI=https://repo.continuum.io/miniconda/Miniconda3-%CONDA_VERSION%-Win
 SET CONDA_DEST=Miniconda3.exe
 
 IF NOT EXIST %CONDA_DIR% (
+	SET INITIALIZE_DIR=1
     CD %BUILD_DIR%
+
 	ECHO                 Downloading conda
 	ECHO ---------------------------------------------------
     powershell /Command "(New-Object System.Net.WebClient).DownloadFile('%CONDA_URI%','%CONDA_DEST%')"
     REM  /D to specify the installation path
     REM  /S to install in silent mode
-	ECHO                  Installing conda                     This may take few minutes. Please wait...
+	ECHO                 Installing conda                     This may take few minutes. Please wait...
 	ECHO ---------------------------------------------------
 	START /wait "" Miniconda3.exe /S /D=%CONDA_DIR% || GOTO:EOF
 	CD ..
 )
+
 ECHO                 Call conda activate
 ECHO ---------------------------------------------------
 CALL "%CONDA_DIR%\Scripts\activate"
+IF %INITIALIZE_DIR%==1 (
+	IF %COPY_FILES%==1 (
+	ECHO     Copying buildenv files to current directory
+	ECHO ---------------------------------------------------
+	REM Recursive copy excluding 'build' and '.git directories
+	ROBOCOPY /S /NJH /NJS /NC /NS /FP /NDL %SETUP_SRC_DIR% %TOP_DIR% /XD build .git
+	ECHO ---------------------------------------------------
+	)
+	python scripts/bootstrap.py
+)
 
-python scripts/bootstrap.py
 ECHO  Bootstrap finished, starting litex_buildenv_ng.py
 ECHO ---------------------------------------------------
-python scripts/litex_buildenv_ng.py
+python scripts/litex_buildenv_ng.py %*% prepare
 
 GOTO:EOF
 
