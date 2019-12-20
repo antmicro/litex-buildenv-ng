@@ -87,7 +87,7 @@ class FirmwareManager:
             '--platform',
             self.cfg.platform(),
             '--target',
-            self.cfg.platform(),
+            self.cfg.target(),
             '--cpu-type',
             self.cfg.cpu(),
             '--iprange',
@@ -177,8 +177,6 @@ class FirmwareManager:
             # Should call `make clean` equivalent
             # Should call `make litex` equivalent
             # Should copy `emulator.bin` to EMULATOR_BUILD_DIR
-
-        sys.exit(0)
 
         # Download data
         if not os.path.exists(self.LINUX_DIR):
