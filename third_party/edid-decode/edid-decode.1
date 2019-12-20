@@ -1,0 +1,68 @@
+.\" shorthand for double quote that works everywhere.
+.ds q \N'34'
+.TH edid-decode 1
+.SH NAME
+edid-decode - Decode EDID data in human-readable format
+.SH SYNOPSIS
+.B edid-decode <options> [in [out]]
+.SH DESCRIPTION
+.B edid-decode
+decodes EDID monitor description data in human-readable format.
+If [in] is not given, or [in] is '-', then the EDID will be read from
+standard input. If [out] is given then the EDID that was read from [in]
+is written to [out] or to standard output if [out] is '-'. By default
+the output is written as a hex dump when writing to standard output or
+a raw EDID if written to a file.
+.PP
+Input files may be raw binaries or ASCII text.  ASCII input is scanned for
+hex dumps; heuristics are included to search for hexdumps in
+.B xrandr(1)
+property output and
+.B Xorg(1)
+log file formats, otherwise the data is treated as a raw hexdump.  EDID blocks
+for connected monitors can be found in
+.B /sys/class/drm/*/edid
+on modern Linux systems with kernel modesetting support.
+
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Prints the help message.
+.TP
+\fB\-o\fR, \fB\-\-output\-format\fR=\fI<fmt>\fR
+If [out] is specified, then write the EDID in format \fI<fmt>\fR.
+.br
+The output format can be one of:
+.br
+hex: hex numbers in ascii text (default for stdout)
+.br
+raw: binary data (default unless writing to stdout)
+.br
+carray: c-program struct
+.TP
+\fB\-c\fR, \fB\-\-check\fR
+Check if the EDID conforms to the standards.
+.TP
+\fB\-e\fR, \fB\-\-extract\fR
+Extract the contents of the first block in hex values.
+This was always done in old edid-decode versions. To get
+the same behavior add this option.
+
+.PP
+.SH NOTES
+Not all fields are decoded, or decoded completely.  Some fields' decoding
+may appear to corrupt the output (for example, detailed string sections
+have their contents printed literally).
+.B edid-decode
+does attempt to validate its input against the relevant standards, but its
+opinions have not been double-checked with the relevant standards bodies,
+so they may be wrong.  Do not rely on the output format, as it will likely
+change in future versions of the tool as additional fields and extensions are
+added.
+.SH "SEE ALSO"
+Xorg(1), xrandr(1)
+.SH AUTHORS
+edid-decode was written by Adam Jackson, with contributions from Eric
+Anholt, Damien Lespiau, Hans Verkuil and others.  For complete history and the
+latest version, see
+.B http://git.linuxtv.org/cgit.cgi/edid-decode.git

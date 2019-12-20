@@ -1,0 +1,65 @@
+Import('env')
+
+env.Append(CPPPATH = ['include'])
+
+# Set up the environment for compiling the libraries
+libenv = env.Clone()
+libenv.Append(CPPPATH = ['lib'])
+
+# Make sure libraries are compiled with DLL_EXPORT on windows
+if libenv['PLATFORM'] == 'win32' or GetOption('mingw32') or GetOption('mingw64'):
+	libenv.Append(CPPDEFINES = ['DLL_EXPORT'])
+
+# Prepare the libobj and shlibobj object files
+libobj = libenv.Object(['lib/tapcfg.c','lib/taplog.c','lib/dlpi.c'])
+if libenv['STATIC_AND_SHARED_OBJECTS_ARE_THE_SAME']:
+	shlibobj = libobj
+else:
+	shlibobj = libenv.SharedObject(['lib/tapcfg.c','lib/taplog.c'])
+
+# Compile the static library into lib directory and shared library
+# for the bindings
+if not libenv['STATIC_AND_SHARED_OBJECTS_ARE_THE_SAME']:
+	libenv.Library('tapcfg', libobj, install=False)
+libenv.SharedLibrary('tapcfg', shlibobj, install=False)
+
+# If we want to create universal binaries of the dynamic library on Mac, do it here
+if GetOption('universal'):
+	libenv["ENV"]["MACOSX_DEPLOYMENT_TARGET"] = "10.4"
+	libenv.Append(CFLAGS = ['-arch', 'ppc', '-arch', 'i386', '-arch', 'x86_64'])
+	libenv32 = libenv.Clone()
+	libenv64 = libenv.Clone()
+
+	libenv32.Append(LINKFLAGS = ['-undefined', 'dynamic_lookup'])
+	libenv32.Append(LINKFLAGS = ['-arch', 'ppc', '-arch', 'i386'])
+	libenv32.Append(LINKFLAGS = ['-install_name', 'libtapcfg32.dylib'])
+	libenv32.SharedLibrary('tapcfg32', shlibobj, install=False)
+
+	libenv64.Append(LINKFLAGS = ['-undefined', 'dynamic_lookup'])
+	libenv64.Append(LINKFLAGS = ['-arch', 'x86_64'])
+	libenv64.Append(LINKFLAGS = ['-install_name', 'libtapcfg64.dylib'])
+	libenv64.SharedLibrary('tapcfg64', shlibobj, install=False)
+
+	libenv.Append(LINKFLAGS = ['-undefined', 'dynamic_lookup'])
+	libenv.Append(LINKFLAGS = ['-arch', 'ppc', '-arch', 'i386', '-arch', 'x86_64'])
+	libenv.Append(LINKFLAGS = ['-install_name', 'libtapcfg.dylib'])
+
+# Compile the .Net bindings
+if env.Detect('gmcs'):
+	asm = env.CLILibrary('TAPNet', ['bindings/AssemblyInfo.cs','bindings/NativeLib.cs','bindings/VirtualDevice.cs','bindings/EthernetFrame.cs','bindings/UTF8Marshaler.cs'])
+	prog = env.CLIProgram('TAPNetTest', ['demos/TAPNetTest.cs'], CILLIBS=[asm, 'System'])
+
+# Set up the environment for compiling the demo tests
+appenv = env.Clone()
+conf = Configure(appenv)
+conf.CheckLib('pthread')
+appenv = conf.Finish()
+appenv.Append(LIBPATH = ['.'])
+appenv.Prepend(LIBS = ['tapcfg'])
+
+# Compile the daemon for testing, broken on MinGW64 because of missing getopt.h
+if not GetOption('mingw64'):
+	tapserverobj = libenv.Object(['daemon/tapserver.c','daemon/serversock.c'])
+	appenv.Program('tapdemo', [tapserverobj,'daemon/tapdemo.c'], install=False)
+	appenv.Program('tapcfgd', [tapserverobj,'daemon/client.c','daemon/daemon.c','daemon/main.c'], install=False)
+

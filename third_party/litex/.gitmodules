@@ -1,0 +1,24 @@
+[submodule "litex/soc/cores/cpu/lm32/verilog/submodule"]
+	path = litex/soc/cores/cpu/lm32/verilog/submodule
+	url = https://github.com/m-labs/lm32.git
+[submodule "litex/soc/cores/cpu/mor1kx/verilog"]
+	path = litex/soc/cores/cpu/mor1kx/verilog
+	url = https://github.com/openrisc/mor1kx.git
+[submodule "litex/soc/software/compiler_rt"]
+	path = litex/soc/software/compiler_rt
+	url = https://git.llvm.org/git/compiler-rt
+[submodule "litex/soc/cores/cpu/picorv32/verilog"]
+	path = litex/soc/cores/cpu/picorv32/verilog
+	url = https://github.com/cliffordwolf/picorv32
+[submodule "litex/build/sim/core/modules/ethernet/tapcfg"]
+	path = litex/build/sim/core/modules/ethernet/tapcfg
+	url = https://github.com/enjoy-digital/tapcfg
+[submodule "litex/soc/cores/cpu/vexriscv/verilog"]
+	path = litex/soc/cores/cpu/vexriscv/verilog
+	url = https://github.com/enjoy-digital/VexRiscv-verilog.git
+[submodule "litex/soc/cores/cpu/minerva/verilog"]
+	path = litex/soc/cores/cpu/minerva/verilog
+	url = https://github.com/lambdaconcept/minerva
+[submodule "litex/soc/cores/cpu/rocket/verilog"]
+	path = litex/soc/cores/cpu/rocket/verilog
+	url = https://github.com/enjoy-digital/rocket-litex-verilog
