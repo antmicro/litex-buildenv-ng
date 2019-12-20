@@ -199,9 +199,9 @@ class FirmwareManager:
             print("Linux-Buildroot")
         else:
             print("Linux-LiteX")
-            subprocess.check_call(['wget', '-r', '-nc', '-P', self.LINUX_DIR, self.ADDITIONAL_OPT['rootfs-url']])
+            subprocess.check_call(['wget', '-nc', '-P', self.LINUX_DIR, self.ADDITIONAL_OPT['rootfs-url']])
             if not self.ADDITIONAL_OPT['linux-config-url'] == '':
-                subprocess.check_call(['wget', '-r', '-nc', '-P', Path.join(self.LINUX_DIR, '.config'),
+                subprocess.check_call(['wget', '-nc', '-P', Path.join(self.LINUX_DIR, '.config'),
                     self.ADDITIONAL_OPT['linux-config-url']])
                 p = subprocess.Popen(["make", "olddefconfig"], cwd=self.LINUX_DIR)
                 p.wait()
@@ -209,7 +209,7 @@ class FirmwareManager:
                 p = subprocess.Popen(["make", "litex_defconfig"], cwd=self.LINUX_DIR)
                 p.wait()
             if not self.ADDITIONAL_OPT['dtb-url'] == '':
-                subprocess.check_call(['wget', '-r', '-nc', '-P', self.LINUX_DIR, self.ADDITIONAL_OPT['dtb-url']])
+                subprocess.check_call(['wget', '-nc', '-P', self.LINUX_DIR, self.ADDITIONAL_OPT['dtb-url']])
 
             if self.cfg.cpu() == "mor1kx":
                 os.environ["KERNEL_BINARY"] = "vmlinux.bin"
