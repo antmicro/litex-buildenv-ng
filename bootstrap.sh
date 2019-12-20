@@ -14,8 +14,13 @@ fi
 [[ "${BASH_SOURCE[0]}" != "${0}" ]] && SOURCED=1 || SOURCED=0
 
 SETUP_SRC="$(realpath ${BASH_SOURCE[0]})"
-SETUP_DIR="$(dirname "${SETUP_SRC}")"
-TOP_DIR="$(realpath "${SETUP_DIR}")"
+SETUP_SRC_DIR="$(dirname "${SETUP_SRC}")"
+SCRIPT_DIR="$(realpath "${SETUP_SRC_DIR}")"
+TOP_DIR="$(pwd)"
+COPY_FILES=0
+if [ ! "$TOP_DIR" == "$(realpath "${SETUP_DIR}")" ]; then
+    COPY_FILES=1
+fi
 
 if [ $SOURCED = 0 ]; then
 	echo "You must source this script, rather than try and run it."
@@ -94,6 +99,12 @@ fi
         cd ..
 	fi
 )
+
+if [ $COPY_FILES -eq 1 ]; then
+    echo "    Copying buildenv files to current directory"
+    echo "---------------------------------------------------"
+    cp -r $SCRIPT_DIR/* .
+fi
 
 python3 scripts/bootstrap.py 
 echo " Bootstrap finished, staring litex_buildenv_ng.py"
