@@ -203,11 +203,9 @@ class FirmwareManager:
             if not self.ADDITIONAL_OPT['linux-config-url'] == '':
                 subprocess.check_call(['wget', '-nc', '-P', Path.join(self.LINUX_DIR, '.config'),
                     self.ADDITIONAL_OPT['linux-config-url']])
-                p = subprocess.Popen(["make", "olddefconfig"], cwd=self.LINUX_DIR)
-                p.wait()
+                p = subprocess.check_call(["make", "olddefconfig"], cwd=self.LINUX_DIR)
             else:
-                p = subprocess.Popen(["make", "litex_defconfig"], cwd=self.LINUX_DIR)
-                p.wait()
+                p = subprocess.check_call(["make", "litex_defconfig"], cwd=self.LINUX_DIR)
             if not self.ADDITIONAL_OPT['dtb-url'] == '':
                 subprocess.check_call(['wget', '-nc', '-P', self.LINUX_DIR, self.ADDITIONAL_OPT['dtb-url']])
 
@@ -216,12 +214,10 @@ class FirmwareManager:
             elif self.cfg.cpu() == "vexriscv":
                 os.environ["KERNEL_BINARY"] = "Image"
 
-            p = subprocess.Popen(["time", "make", "-j"], cwd=self.LINUX_DIR)
-            p.wait()
+            p = subprocess.check_call(["time", "make", "-j"], cwd=self.LINUX_DIR)
             link = Path.join(self.LINUX_DIR, 'arch', os.environ["ARCH"], 'boot', os.environ["KERNEL_BINARY"])
-            link_out = os.environ["ARCH"] + "-" + os.environ["KERNEL_BINARY"]
-            p = subprocess.Popen([f"ln", "-sf", "{link}", "{link_out}"], cwd=self.LINUX_DIR)
-            p.wait()
+            link_out = Path.join(self.LINUX_DIR, f'{os.environ["ARCH"]}-{os.environ["KERNEL_BINARY"]}')
+            p = subprocess.check_call(["ln", "-sf", f"{link}", f"{link_out}"], cwd=self.LINUX_DIR)
 
     functions = { \
     #        'test':run_test, \
