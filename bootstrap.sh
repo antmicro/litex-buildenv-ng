@@ -3,29 +3,30 @@
 if [ "`whoami`" = "root" ]
 then
     echo "Running the script as root is not permitted"
-    return 1 2> /dev/null || exit 1
+    return 1 2> /dev/null || return
 fi
 
 if [ ! -n "$BASH_VERSION" ]; then
     echo "This script has to be sourced in bash"
-    return 1 2> /dev/null || exit 1
+    return 1 2> /dev/null || return
 fi
 
 [[ "${BASH_SOURCE[0]}" != "${0}" ]] && SOURCED=1 || SOURCED=0
 
 SETUP_SRC="$(realpath ${BASH_SOURCE[0]})"
 SETUP_SRC_DIR="$(dirname "${SETUP_SRC}")"
-SCRIPT_DIR="$(realpath "${SETUP_SRC_DIR}")"
+SCRIPT_SRC_DIR="$(realpath "${SETUP_SRC_DIR}")"
 TOP_DIR="$(pwd)"
 COPY_FILES=0
-if [ ! "$TOP_DIR" == "$(realpath "${SETUP_DIR}")" ]; then
+INITIALIZE_DIR=0
+if [ ! "$TOP_DIR" == "$(realpath "${SETUP_SRC_DIR}")" ]; then
     COPY_FILES=1
 fi
 
 if [ $SOURCED = 0 ]; then
 	echo "You must source this script, rather than try and run it."
 	echo ". $SETUP_SRC"
-	exit 1
+	return
 fi
 
 # Conda does not support ' ' in the path (it bails early).
@@ -83,30 +84,33 @@ else
 fi
 
 # Install conda for downloading packages
-(
-	if [[ ! -e $CONDA_DIR/bin/conda ]]; then
-		cd $BUILD_DIR
-        echo "                Downloading conda"
-        echo "---------------------------------------------------"
-		wget --continue https://repo.continuum.io/miniconda/$CONDA_INSTALLER
-		chmod a+x $CONDA_INSTALLER
-        echo "                 Installing conda"
-        echo "---------------------------------------------------"
-        # -p to specify the install location
-        # -b to enable batch mode (no prompts)
-        # -f to not return an error if the location already exists
-        ./$CONDA_INSTALLER -p $CONDA_DIR -b -f || exit 1
-        cd ..
-	fi
-)
-
-if [ $COPY_FILES -eq 1 ]; then
-    echo "    Copying buildenv files to current directory"
+if [[ ! -e $CONDA_DIR/bin/conda ]]; then
+	INITIALIZE_DIR=1
+	cd $BUILD_DIR
+    echo "                Downloading conda"
     echo "---------------------------------------------------"
-    cp -r $SCRIPT_DIR/* .
+	wget --continue https://repo.continuum.io/miniconda/$CONDA_INSTALLER
+	chmod a+x $CONDA_INSTALLER
+    echo "                 Installing conda"
+    echo "---------------------------------------------------"
+    # -p to specify the install location
+    # -b to enable batch mode (no prompts)
+    # -f to not return an error if the location already exists
+    ./$CONDA_INSTALLER -p $CONDA_DIR -b -f || return 
+    cd ..
+fi
+pwd
+if [ $INITIALIZE_DIR -eq 1 ]; then
+    if [ $COPY_FILES -eq 1 ]; then
+        echo "    Copying buildenv files to current directory"
+        echo "---------------------------------------------------"
+        pushd $SCRIPT_SRC_DIR
+        find . -type f -path 'build/*' -prune -o -path '.git/*' -prune -exec cp --parents '{}' $TOP_DIR \; >>/dev/null 
+  >>/dev/null   >>/dev/null         popd
 fi
 
-python3 scripts/bootstrap.py 
+python3 scripts/bootstrap.py
+fi
 echo " Bootstrap finished, staring litex_buildenv_ng.py"
 echo "---------------------------------------------------"
 python3 scripts/litex_buildenv_ng.py $@ prepare
