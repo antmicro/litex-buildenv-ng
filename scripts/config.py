@@ -140,9 +140,11 @@ CPU architecture:  {self.cpu_arch()}
 
         if platform:
             self._config[self.DEFAULT][self.PLATFORM] = platform
+            os.environ['PLATFORM'] = platform
 
         if target:
             self._config[self.DEFAULT][self.TARGET] = target
+            os.environ['TARGET'] = target
 
         if firmware:
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
