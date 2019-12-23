@@ -32,7 +32,10 @@ class ConfigManager(Singleton):
         return self._config[self.DEFAULT][self.CPU]
 
     def cpu_variant(self):
-        return self._config[self.DEFAULT][self.CPU_VARIANT]
+        if self.CPU_VARIANT in self._config[self.DEFAULT].keys():
+            return self._config[self.DEFAULT][self.CPU_VARIANT]
+        else:
+            return None
 
     def platform(self):
         return self._config[self.DEFAULT][self.PLATFORM]
@@ -150,7 +153,7 @@ CPU architecture:  {self.cpu_arch()}
             self._config[self.DEFAULT][self.FIRMWARE] = firmware
 
         for setting in [
-                self.CPU, self.CPU_VARIANT, self.PLATFORM, self.TARGET,
+                self.CPU, self.PLATFORM, self.TARGET,
                 self.FIRMWARE
         ]:
             if not self._config.has_option(self.DEFAULT, setting):
