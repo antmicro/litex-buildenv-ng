@@ -135,6 +135,8 @@ CPU architecture:  {self.cpu_arch()}
         if not self._config.has_section(self.DEFAULT):
             self._config.add_section(self.DEFAULT)
 
+        self._default_section = self.DEFAULT
+
         if cpu:
             self._config[self.DEFAULT][self.CPU] = cpu
 
