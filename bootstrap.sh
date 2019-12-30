@@ -202,6 +202,7 @@ function check_version {
         fix_conda
 
         pip install --upgrade argh
+        pip install --upgrade gitpython
 	fi
     echo "Conda environment ready"
 
