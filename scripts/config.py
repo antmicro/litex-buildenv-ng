@@ -62,8 +62,10 @@ class ConfigManager(Singleton):
         }.get(self.cpu())
 
     def get_all_parameters(self):
+        self.toolchain = f'{self.cpu()}.{self.firmware()}'
         return (self.cpu(), self.cpu_arch(), self.cpu_variant(),
-                self.platform(), self.target(), self.firmware())
+                self.platform(), self.target(), self.firmware(),
+                self.toolchain)
 
     def get_local_tools(self):
         return [
