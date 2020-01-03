@@ -1,0 +1,2 @@
+toolchain-or1k-elf-newlib
+toolchain-or1k-linux-musl
