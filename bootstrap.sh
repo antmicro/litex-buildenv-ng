@@ -191,6 +191,7 @@ function check_version {
         conda update -q conda
         fix_conda
         conda config --system --add channels timvideos
+        conda config --system --add channels antmicro
         conda info
 
         pin_conda_package python ${PYTHON_VERSION}
