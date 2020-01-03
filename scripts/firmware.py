@@ -409,7 +409,7 @@ class FirmwareManager:
             elif self.cfg.cpu() == "vexriscv":
                 os.environ["KERNEL_BINARY"] = "Image"
 
-            subprocess.check_call(['time', 'make', f'-j{str(self.ADDITIONAL_OPT["jobs"])}'],
+            subprocess.check_call(['make', f'-j{str(self.ADDITIONAL_OPT["jobs"])}'],
                                   cwd=self.FIRMWARE_DIR)
             link = Path.join(self.FIRMWARE_DIR, 'arch', os.environ["ARCH"],
                              'boot', os.environ["KERNEL_BINARY"])
