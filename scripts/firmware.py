@@ -498,8 +498,16 @@ def firmware():
     cfg = config.ConfigManager()
     fm = FirmwareManager(cfg.firmware(), cfg)
 
-    if not cfg.firmware() == 'zephyr':
-        fm.build_firmware()
+    try:
+        if not cfg.firmware() == 'zephyr':
+            fm.build_firmware()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
-    if not cfg.firmware() == 'hdmi2usb':
-        fm.run()
+    try:
+        if not cfg.firmware() == 'hdmi2usb':
+            fm.run()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
