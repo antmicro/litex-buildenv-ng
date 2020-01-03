@@ -22,7 +22,18 @@ def create_symlink(source, destination):
 
 def get_python_module_version(module_name):
     module = importlib.import_module(module_name)
-    return module.__version__
+    try:
+        return module.__version__
+    except Exception as e:
+        Log.log(e)
+        Log.log("Trying other method of checking version...")
+
+    module = importlib.import_module(f'{module_name}.version')
+    try:
+        return module.__version__
+    except Exception as e:
+        Log.log(e)
+        raise
 
 
 def get_program_version(program):
