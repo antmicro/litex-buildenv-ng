@@ -1,5 +1,5 @@
 pyelftools #py:elftools
 packaging
 west
-pykwalify #py:pykwalify.core
-cmake==4.7.10 #bin:cmake
+pykwalify
+cmake==3.15.3 #bin:cmake
