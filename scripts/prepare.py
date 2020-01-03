@@ -117,7 +117,9 @@ class RequirementsManager:
 
             # we filter out git+.*, as these indicate python modules fetched
             # from git repositiories, without version information
-            if dep["version"] and not dep["name"].startswith("git+"):
+            if dep["version"] and not dep["name"].startswith("git+") and noun == "pip":
+                params.append(f"{dep['name']}=={dep['version']}")
+            elif dep["version"] and not dep["name"].startswith("git+") and noun == "conda":
                 params.append(f"{dep['name']}={dep['version']}")
             else:
                 params.append(dep["name"])
