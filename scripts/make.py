@@ -10,8 +10,8 @@ from litex.soc.integration.builder import *
 
 target_soc = {
     "base": "BaseSoC",
-    "net": "Ethernet",
-    "usb": "USB",
+    "net": "EthernetSoC",
+    "usb": "USBSoC",
 }
 
 def get_args(parser, platform='opsis', target='hdmi2usb'):
