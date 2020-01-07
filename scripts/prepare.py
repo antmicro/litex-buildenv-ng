@@ -177,6 +177,7 @@ class RequirementsManager:
         # (==([^ #]+))? - two equality signs followed by version - optional
         # #(bin|py) - hash and information how to check the requirement
         # (\S+) - the requirement name to look for
+        # FIXME: pip dependecies with '#' and '=', see e.g.: mimasv2/pip.txt
         self._regex = re.compile(
             r"^([^\ #(==)]+)(==([^ #]+))?( ?#(bin|py):(\S+))?$")
 
