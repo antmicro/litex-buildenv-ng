@@ -7,12 +7,12 @@ import re
 import subprocess
 import requests
 import shutil
-# from log import Log
+from log import Log
 
 
 class Progress(git.remote.RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
-        print('update(%s, %s, %s)' % (cur_count, max_count, message))
+        Log.log('update(%s, %s, %s)' % (cur_count, max_count, message))
 
 
 class FirmwareManager:
@@ -159,7 +159,7 @@ class FirmwareManager:
         for opt in self.FUPY_DEFAULT.keys():
             if opt not in self.cfg._config[self.cfg._default_section].keys():
                 if self.firmware_target in self.FUPY_DEFAULT[opt].keys():
-                    print(f'No {opt} provided. Using default:'
+                    Log.log(f'No {opt} provided. Using default:'
                           f'{self.FUPY_DEFAULT[opt][self.firmware_target]}')
                     self.ADDITIONAL_OPT[opt] = \
                         self.FUPY_DEFAULT[opt][self.firmware_target]
@@ -174,7 +174,7 @@ class FirmwareManager:
 
         # Download Micro Python
         if not os.path.exists(self.FIRMWARE_DIR):
-            print(f"Cloning into {self.FIRMWARE_DIR} ...")
+            Log.log(f"Cloning into {self.FIRMWARE_DIR} ...")
             r = git.Repo.clone_from(self.ADDITIONAL_OPT['firmware-url'],
                                     self.FIRMWARE_DIR,
                                     branch=self.ADDITIONAL_OPT['firmware-branch'],
@@ -222,7 +222,7 @@ class FirmwareManager:
         for opt in self.ZEPHYR_DEFAULT.keys():
             if opt not in self.cfg._config[self.cfg._default_section].keys():
                 if self.firmware_target in self.ZEPHYR_DEFAULT[opt].keys():
-                    print(f'No {opt} provided. Using default:'
+                    Log.log(f'No {opt} provided. Using default:'
                           f'{self.ZEPHYR_DEFAULT[opt][self.firmware_target]}')
                     self.ADDITIONAL_OPT[opt] = \
                         self.ZEPHYR_DEFAULT[opt][self.firmware_target]
@@ -246,7 +246,7 @@ class FirmwareManager:
         # Download data
         if not os.path.exists(self.FIRMWARE_DIR):
             os.mkdir(self.FIRMWARE_DIR)
-            print(f"West init in {self.FIRMWARE_DIR} ...")
+            Log.log(f"West init in {self.FIRMWARE_DIR} ...")
             subprocess.check_call(['west', 'init', '--manifest-url',
                                    self.ADDITIONAL_OPT['firmware-url'],
                                    '--manifest-rev',
@@ -260,7 +260,7 @@ class FirmwareManager:
                 url = r.url
                 sdk_version = url.split('/')[-1][1:]
                 sdk_url = f'{url.replace("tag", "download")}/zephyr-sdk-{sdk_version}-setup.run'
-                print(f"Downloading Zephyr SDK {sdk_version} to {self.THIRD_PARTY_DIR} ...")
+                Log.log(f"Downloading Zephyr SDK {sdk_version} to {self.THIRD_PARTY_DIR} ...")
                 subprocess.check_call(['wget', '-nc', '-P',
                                        self.THIRD_PARTY_DIR, sdk_url])
                 sdk = Path.join(self.THIRD_PARTY_DIR,
@@ -319,7 +319,7 @@ class FirmwareManager:
         for opt in self.LINUX_DEFAULT.keys():
             if opt not in self.cfg._config[self.cfg._default_section].keys():
                 if self.firmware_target in self.LINUX_DEFAULT[opt].keys():
-                    print(f'No {opt} provided. Using default:'
+                    Log.log(f'No {opt} provided. Using default:'
                           f'{self.LINUX_DEFAULT[opt][self.firmware_target]}')
                     self.ADDITIONAL_OPT[opt] = \
                         self.LINUX_DEFAULT[opt][self.firmware_target]
@@ -364,7 +364,7 @@ class FirmwareManager:
 
         # Download data
         if not os.path.exists(self.FIRMWARE_DIR):
-            print(f"Cloning into {self.FIRMWARE_DIR} ...")
+            Log.log(f"Cloning into {self.FIRMWARE_DIR} ...")
             git.Repo.clone_from(self.ADDITIONAL_OPT['firmware-url'],
                                 self.FIRMWARE_DIR,
                                 branch=self.ADDITIONAL_OPT['firmware-branch'],
@@ -372,23 +372,24 @@ class FirmwareManager:
 
         if not os.path.exists(BUILDROOT_DIR) \
                 and 'buildroot' in self.firmware_target:
-            print(f"Cloning into {self.BUILDROOT_DIR} ...")
+            Log.log(f"Cloning into {self.BUILDROOT_DIR} ...")
             git.Repo.clone_from(self.ADDITIONAL_OPT['buildroot-url'],
                                 BUILDROOT_DIR, progress=Progress())
 
         if not os.path.exists(LLV_DIR) \
                 and self.cfg.cpu() == "vexriscv" \
                 and 'buildroot' in self.firmware_target:
-            print(f"Cloning into {self.LLV_DIR} ...")
+            Log.log(f"Cloning into {self.LLV_DIR} ...")
             git.Repo.clone_from(self.ADDITIONAL_OPT['llv-url'],
                                 LLV_DIR, progress=Progress())
 
         if self.cfg.cpu() == "vexriscv" \
                 and 'buildroot' in self.firmware_target:
             # TODO
-            print("Linux-Buildroot")
+            Log.log("Linux-Buildroot Unsupported")
+            sys.exit(-1)
         else:
-            print("Linux-LiteX")
+            Log.log("Linux-LiteX")
             subprocess.check_call(['wget', '-nc', '-P', self.FIRMWARE_DIR,
                                    self.ADDITIONAL_OPT['rootfs-url']])
             if not self.ADDITIONAL_OPT['linux-config-url'] == '':
@@ -502,12 +503,12 @@ def firmware():
         if not cfg.firmware() == 'zephyr':
             fm.build_firmware()
     except Exception as e:
-        print(e)
-        sys.exit(1)
+        Log.log(e)
+        sys.exit(-1)
 
     try:
         if not cfg.firmware() == 'hdmi2usb' and not cfg.firmware() == 'stub':
             fm.run()
     except Exception as e:
-        print(e)
-        sys.exit(1)
+        Log.log(e)
+        sys.exit(-1)
