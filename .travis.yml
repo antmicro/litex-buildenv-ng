@@ -143,6 +143,7 @@ env:
    #--------------------------------------------
    # FIXME: Add some here
    - C=vexriscv         TC="ise"       P=arty              T="base"       F=micropython  A="jobs = ${JOBS}"
+   - C=vexriscv         TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=micropython  A="jobs = ${JOBS}"
    #--------------------------------------------
    # Linux Targets
    #--------------------------------------------
