@@ -18,7 +18,7 @@ class Progress(git.remote.RemoteProgress):
 class FirmwareManager:
 
     FIRMWARE_OPT = ['test', 'load', 'flash', 'connect', 'clear']
-    FIRMWARE_TARGET = ['linux', 'zephyr', 'micropython', 'hdmi2usb']
+    FIRMWARE_TARGET = ['linux', 'zephyr', 'micropython', 'hdmi2usb', 'stub']
 
     # Linux defaults:
     LINUX = {
