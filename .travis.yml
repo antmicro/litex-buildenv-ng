@@ -41,79 +41,103 @@ env:
    # Bare-metal firmware, base targets
    #--------------------------------------------
    # LatticeMico32
-   #- C=lm32             TC="vivado"    P=arty              T="base net"
-   #- C=lm32             TC="vivado"    P=basys3            T="base"
-   #- C=lm32             TC="vivado"    P=cmod_a7           T="base"
-   #- C=lm32             TC="vivado"    P=mimas_a7          T="base net"
-   #- C=lm32             TC="vivado"    P=neso              T="base"
-   #- C=lm32             TC="vivado"    P=nexys_video       T="base net"
-   #- C=lm32             TC="ise"       P=atlys             T="base net"
-   #- C=lm32             TC="ise"       P=galatea           T="base"
-   #- C=lm32             TC="ise"       P=mimasv2           T="base"
-   #- C=lm32             TC="ise"       P=minispartan6      T="base"
-   #- C=lm32             TC="ise"       P=opsis             T="base net"
-   #- C=lm32             TC="ise"       P=pipistrello       T="base"
-   #- C=lm32             TC="ise"       P=saturn            T="base"
-   #- C=lm32             TC="ise"       P=waxwing           T="base"
-   #- C=lm32.lite        TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
-   #- C=lm32.lite        TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
-   #- C=lm32.lite        TC="icestorm"  P=icebreaker        T="base"       F=stub
-   #- C=lm32.lite        TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
-   #- C=lm32.lite        TC="icestorm"  P=upduino_v1        T="base"       F=stub
-   #- C=lm32.lite        TC="icestorm"  P=icefun            T="base"       F=stub
-   #- C=lm32.lite        TC="vivado"    P=arty              T="base net"
-   #- C=lm32.lite                       P=opsis             T="base net"
-   #- C=lm32.minimal     TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
-   #- C=lm32.minimal     TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
-   #- C=lm32.minimal     TC="icestorm"  P=icebreaker        T="base"       F=stub
-   #- C=lm32.minimal     TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
-   #- C=lm32.minimal     TC="icestorm"  P=upduino_v1        T="base"       F=stub
-   #- C=lm32.minimal     TC="icestorm"  P=icefun            T="base"       F=stub
-   #- C=lm32.minimal     TC="vivado"    P=arty              T="base net"
-   #- C=lm32.minimal     TC="ise"       P=opsis             T="base net"
-   # OpenRISC1000
-   #- C=mor1kx           TC="vivado"    P=arty              T="base net"
-   #- C=mor1kx           TC="vivado"    P=mimas_a7          T="base net"
-   #- C=mor1kx           TC="vivado"    P=atlys             T="base net"
-   #- C=mor1kx           TC="ise"       P=mimasv2           T="base"
-   #- C=mor1kx           TC="ise"       P=opsis             T="base net"
-   #- C=mor1kx           TC="ise"       P=pipistrello       T="base"
-   # VexRISCV
-   #- C=vexriscv         TC="vivado"    P=arty              T="base net"
-   #- C=vexriscv         TC="vivado"    P=mimas_a7          T="base net"
-   #- C=vexriscv         TC="ise"       P=mimasv2           T="base"
-   #- C=vexriscv         TC="ise"       P=opsis             T="base net"
-   #- C=vexriscv.lite    TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
-   #- C=vexriscv.lite    TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
-   #- C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=stub
-   #- C=vexriscv.lite    TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
-   #- C=vexriscv.lite    TC="icestorm"  P=upduino_v1        T="base"       F=stub
-   #- C=vexriscv.lite    TC="icestorm"  P=icefun            T="base"       F=stub
-   #- C=vexriscv.lite    TC="vivado"    P=arty              T="base net"
-   #- C=vexriscv.lite    TC="ise"       P=opsis             T="base net"
-   #- C=vexriscv.lite    TC="ise"       P=pano_logic_g2     T="base"
-   # PicoRV32
-   #- C=picorv32         TC="vivado"    P=arty              T="base net"
-   #- C=picorv32         TC="vivado"    P=mimas_a7          T="base net"
-   #- C=picorv32         TC="ise"       P=opsis             T="base net"
-   #- C=picorv32.minimal TC="icestorm"  P=icebreaker        T="base"       F=stub
-   #- C=picorv32.minimal TC="vivado"    P=arty              T="base net"
-   #- C=picorv32.minimal TC="ise"       P=opsis             T="base net"
-   # minerva target
-   #- C=minerva          TC="vivado"    P=arty              T="base net"
-   #- C=minerva          TC="ise"       P=opsis             T="base net"
+   - C=lm32             TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=lm32             TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=lm32             TC="vivado"    P=basys3            T="base"       F=hdmi2usb
+   - C=lm32             TC="vivado"    P=cmod_a7           T="base"       F=hdmi2usb
+   - C=lm32             TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - C=lm32             TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - C=lm32             TC="vivado"    P=neso              T="base"       F=hdmi2usb
+   - C=lm32             TC="vivado"    P=nexys_video       T="base"       F=hdmi2usb
+   - C=lm32             TC="vivado"    P=nexys_video       T="net"        F=hdmi2usb
+   - C=lm32             TC="ise"       P=atlys             T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=atlys             T="net"        F=hdmi2usb
+   - C=lm32             TC="ise"       P=galatea           T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=minispartan6      T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - C=lm32             TC="ise"       P=pipistrello       T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=saturn            T="base"       F=hdmi2usb
+   - C=lm32             TC="ise"       P=waxwing           T="base"       F=hdmi2usb
+   - C=lm32.lite        TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
+   - C=lm32.lite        TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
+   - C=lm32.lite        TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - C=lm32.lite        TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - C=lm32.lite        TC="icestorm"  P=upduino_v1        T="base"       F=stub
+   - C=lm32.lite        TC="icestorm"  P=icefun            T="base"       F=stub
+   - C=lm32.lite        TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=lm32.lite        TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=lm32.lite                       P=opsis             T="base"       F=hdmi2usb
+   - C=lm32.lite                       P=opsis             T="net"        F=hdmi2usb
+   - C=lm32.minimal     TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
+   - C=lm32.minimal     TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
+   - C=lm32.minimal     TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - C=lm32.minimal     TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - C=lm32.minimal     TC="icestorm"  P=upduino_v1        T="base"       F=stub
+   - C=lm32.minimal     TC="icestorm"  P=icefun            T="base"       F=stub
+   - C=lm32.minimal     TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=lm32.minimal     TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=lm32.minimal     TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=lm32.minimal     TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   # OpenRISC1000    F=hdmi2usb
+   - C=mor1kx           TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=mor1kx           TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=mor1kx           TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - C=mor1kx           TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - C=mor1kx           TC="vivado"    P=atlys             T="base"       F=hdmi2usb
+   - C=mor1kx           TC="vivado"    P=atlys             T="net"        F=hdmi2usb
+   - C=mor1kx           TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
+   - C=mor1kx           TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=mor1kx           TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - C=mor1kx           TC="ise"       P=pipistrello       T="base"       F=hdmi2usb
+   # VexRISCV    F=hdmi2usb
+   - C=vexriscv         TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=vexriscv         TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=vexriscv         TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - C=vexriscv         TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - C=vexriscv         TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
+   - C=vexriscv         TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=vexriscv         TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - C=vexriscv.lite    TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
+   - C=vexriscv.lite    TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
+   - C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - C=vexriscv.lite    TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - C=vexriscv.lite    TC="icestorm"  P=upduino_v1        T="base"       F=stub
+   - C=vexriscv.lite    TC="icestorm"  P=icefun            T="base"       F=stub
+   - C=vexriscv.lite    TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=vexriscv.lite    TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=vexriscv.lite    TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - C=vexriscv.lite    TC="ise"       P=pano_logic_g2     T="base"       F=hdmi2usb
+   # PicoRV32     F=hdmi2usb
+   - C=picorv32         TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=picorv32         TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=picorv32         TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - C=picorv32         TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - C=picorv32         TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=picorv32         TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - C=picorv32.minimal TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - C=picorv32.minimal TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=picorv32.minimal TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=picorv32.minimal TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=picorv32.minimal TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   # minerva target     F=hdmi2usb
+   - C=minerva          TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - C=minerva          TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - C=minerva          TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - C=minerva          TC="ise"       P=opsis             T="net"        F=hdmi2usb
    #--------------------------------------------
-   # Video Targets
+   # Video Targets     F=hdmi2usb
    #--------------------------------------------
-   #- C=lm32             TC="vivado"    P=nexys_video       T="video"
-   #- C=lm32             TC="ise"       P=atlys             T="video"
-   #- C=lm32             TC="ise"       P=opsis             T="video"
+   - C=lm32             TC="vivado"    P=nexys_video       T="video"      F=hdmi2usb
+   - C=lm32             TC="ise"       P=atlys             T="video"      F=hdmi2usb
+   - C=lm32             TC="ise"       P=opsis             T="video"      F=hdmi2usb
    #--------------------------------------------
    # HDMI2USB Targets
    #--------------------------------------------
-   #- C=lm32             TC="ise"       P=atlys             T="hdmi2usb"
-   #- C=lm32             TC="ise"       P=opsis             T="hdmi2usb"
-   - C=lm32             TC="ise"       P=arty              T="base"       F=hdmi2usb     A="jobs = ${JOBS}" # [XXX: REMOVE ME] Nonstandard case
+   - C=lm32             TC="ise"       P=atlys             T="hdmi2usb"   F=hdmi2usb
+   - C=lm32             TC="ise"       P=opsis             T="hdmi2usb"   F=hdmi2usb
    #--------------------------------------------
    # MicroPython Targets
    #--------------------------------------------
@@ -123,9 +147,9 @@ env:
    # Linux Targets
    #--------------------------------------------
    - C=mor1kx.linux     TC="vivado"    P=arty              T="net"        F=linux        A="jobs = ${JOBS}"
-   #- C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux
-   #- C=mor1kx.linux     TC="ise"       P=atlys             T="net"        F=linux
-   #- C=mor1kx.linux     TC="ise"       P=opsis             T="net"        F=linux
+   - C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux        A="jobs = ${JOBS}"
+   - C=mor1kx.linux     TC="ise"       P=atlys             T="net"        F=linux        A="jobs = ${JOBS}"
+   - C=mor1kx.linux     TC="ise"       P=opsis             T="net"        F=linux        A="jobs = ${JOBS}"
    # FIXME: Add vexriscv.linux
    #- C=vexriscv.linux   TC="vivado"    P=arty              T="net"        F=linux
    #- C=vexriscv.linux   TC="ise"       P=opsis             T="net"        F=linux
@@ -133,9 +157,9 @@ env:
    #--------------------------------------------
    # Zephyr Targets
    #--------------------------------------------
-   #- C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=zephyr
+   - C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
    - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
-   #- C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr
+   - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
 
 # notifications:
 #  email:
