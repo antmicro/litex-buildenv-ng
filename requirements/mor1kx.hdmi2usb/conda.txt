@@ -1,0 +1,1 @@
+toolchain-or1k-elf-nostdc #bin:or1k-elf-gcc
