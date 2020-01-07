@@ -2,21 +2,15 @@
 
 import argparse
 import os
-import os.path as Path
 
 from litex.build.tools import write_to_file
 from litex.soc.integration.soc_sdram import *
 from litex.soc.integration.builder import *
 
-target_soc = {
-    "base": "BaseSoC",
-    "net": "EthernetSoC",
-    "usb": "USBSoC",
-}
 
 def get_args(parser, platform='opsis', target='hdmi2usb'):
-    parser.add_argument("--platform", action="store", default=str())
-    parser.add_argument("--target", action="store", default=str())
+    parser.add_argument("--platform", action="store", default=os.environ.get('PLATFORM', platform))
+    parser.add_argument("--target", action="store", default=os.environ.get('TARGET', target))
 
     soc_sdram_args(parser)
     parser.set_defaults(cpu_type=os.environ.get('CPU', 'lm32'))
@@ -43,27 +37,24 @@ def get_builddir(args):
     full_cpu = args.cpu_type
     if args.cpu_variant:
         full_cpu = "{}.{}".format(full_cpu, args.cpu_variant)
-    path = Path.join(os.getcwd(), 'build', f'{full_platform.lower()}_{args.target.lower()}_{full_cpu.lower()}')
-    return path
+    return "build/{}_{}_{}/".format(full_platform.lower(), args.target.lower(), full_cpu.lower())
 
 
 def get_testdir(args):
     builddir = get_builddir(args)
-    testdir = Path.join(builddir, 'test')
+    testdir = "{}/test".format(builddir)
     return testdir
 
 
 def get_platform(args):
     assert args.platform is not None
-    exec("from litex_boards.platforms import {}".format(args.platform), globals())
-    return eval(args.platform).Platform(**dict(args.platform_option))
+    exec("from platforms.{} import Platform".format(args.platform), globals())
+    return Platform(**dict(args.platform_option))
 
 
 def get_soc(args, platform):
-    assert args.platform is not None
-    exec("from litex_boards.targets import {}".format(args.platform), globals())
-    soc_name = f'{args.platform}.{target_soc[args.target]}'
-    soc = eval(soc_name)(ident=eval(soc_name).__name__, **soc_sdram_argdict(args), **dict(args.target_option))
+    exec("from targets.{}.{} import SoC".format(args.platform, args.target.lower(), args.target), globals())
+    soc = SoC(platform, ident=SoC.__name__, **soc_sdram_argdict(args), **dict(args.target_option))
     if hasattr(soc, 'configure_iprange'):
         soc.configure_iprange(args.iprange)
     return soc
@@ -147,16 +138,16 @@ def main():
 
         builder = Builder(soc, **buildargs)
         if not args.no_compile_firmware or args.override_firmware:
-            builder.add_software_package("uip", Path.join(os.getcwd(), 'firmware', 'uip'))
+            builder.add_software_package("uip", "{}/firmware/uip".format(os.getcwd()))
 
             # FIXME: All platforms which current run their user programs from
             # SPI flash lack the block RAM resources to run the default
             # firmware. Check whether to use the stub or default firmware
             # should be refined (perhaps soc attribute?).
             if "main_ram" in soc.mem_regions:
-                builder.add_software_package("firmware", Path.join(os.getcwd(), 'firmware'))
+                builder.add_software_package("firmware", "{}/firmware".format(os.getcwd()))
             else:
-                builder.add_software_package("stub", Path.join(os.getcwd(), 'firmware', 'stub'))
+                builder.add_software_package("stub", "{}/firmware/stub".format(os.getcwd()))
         vns = builder.build(**dict(args.build_option))
     else:
         vns = platform.build(soc, build_dir=os.path.join(builddir, "gateware"))
@@ -169,7 +160,7 @@ def main():
         write_to_file(os.path.join(kerneldir, "csr.h"), csr_header)
 
     if hasattr(soc, 'do_exit'):
-        soc.do_exit(vns, filename=Path.join(testdir, 'analyzer.csv'))
+        soc.do_exit(vns, filename="{}/analyzer.csv".format(testdir))
 
 
 if __name__ == "__main__":
