@@ -506,7 +506,7 @@ def firmware():
         sys.exit(1)
 
     try:
-        if not cfg.firmware() == 'hdmi2usb':
+        if not cfg.firmware() == 'hdmi2usb' and not cfg.firmware() == 'stub':
             fm.run()
     except Exception as e:
         print(e)
