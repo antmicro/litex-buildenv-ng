@@ -5,7 +5,7 @@ import traceback
 from log import Log
 import config
 from prepare import prepare
-from gateware import gateware
+from gateware_build import gateware
 from firmware import firmware
 
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     parser.add_argument("--trace",
                         action="store_true",
                         help="dump stack trace on error")
-    parser.add_commands([prepare, gateware, firmware])
+    parser.add_commands([prepare, firmware, gateware])
 
     options = parser.parse_args()
 
