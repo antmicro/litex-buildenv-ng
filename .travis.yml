@@ -14,8 +14,6 @@ dist:
 before_install:
  - source .travis/common.sh
  - bash .travis/fixup-git.sh
- - export HDMI2USB_UDEV_IGNORE=1
- - export JOBS=2
 
 install:
  - source .travis/common.sh
@@ -30,6 +28,11 @@ after_failure:
 
 after_success:
  - bash .travis/after_success.sh
+
+env:
+  global:
+    - HDMI2USB_UDEV_IGNORE=1
+    - JOBS=2
 
 jobs:
   include:
