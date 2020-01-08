@@ -450,6 +450,7 @@ jobs:
      env:
      - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
 
+  # Sets to fix:
   allow_failures:
    - env: C=lm32             TC="ise"       P=galatea           T="base"       F=hdmi2usb
    - env: C=lm32             TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
@@ -458,6 +459,7 @@ jobs:
    - env: C=lm32.lite        TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
    - env: C=lm32.minimal     TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
    - env: C=vexriscv.lite    TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - env: C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux        A="jobs = ${JOBS}"
   fast_finish: true
 
 
