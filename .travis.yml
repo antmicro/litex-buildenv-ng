@@ -7,6 +7,12 @@ addons:
      - build-essential
      - gnupg
      - util-linux
+  homebrew:
+    packages:
+    update: false
+
+osx_image:
+  - xcode8.3
 
 dist:
  - bionic
@@ -37,6 +43,8 @@ env:
 jobs:
   include:
    # C=cpu.variant      TC="toolchain" P=platform         T="target1 t2"  F=firmware    A="config1 = value1;config2 = value2"
+   #--------------------------------------------
+   # LINUX
    #--------------------------------------------
    # Bare-metal firmware, base targets
    #--------------------------------------------
@@ -451,6 +459,425 @@ jobs:
      - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
    - stage: "Zephyr"
      os: linux
+     env:
+     - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
+
+   #--------------------------------------------
+   # macOS
+   #--------------------------------------------
+   # Bare-metal firmware, base targets
+   #--------------------------------------------
+   # LatticeMico32
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=basys3            T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=cmod_a7           T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=neso              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=nexys_video       T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=nexys_video       T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=atlys             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=atlys             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=galatea           T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=minispartan6      T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=pipistrello       T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=saturn            T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=waxwing           T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="icestorm"  P=upduino_v1        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="icestorm"  P=icefun            T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite        TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite                       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.lite                       P=opsis             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="icestorm"  P=upduino_v1        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="icestorm"  P=icefun            T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=lm32.minimal     TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   # OpenRISC1000
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="vivado"    P=atlys             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="vivado"    P=atlys             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=mor1kx           TC="ise"       P=pipistrello       T="base"       F=hdmi2usb
+   # VexRISCV
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="ise"       P=mimasv2           T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv         TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=ice40_hx8k_b_evn  T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=upduino_v1        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=icefun            T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="ise"       P=pano_logic_g2     T="base"       F=hdmi2usb
+   # PicoRV32
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32         TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32         TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32         TC="vivado"    P=mimas_a7          T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32         TC="vivado"    P=mimas_a7          T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32         TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32         TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32.minimal TC="icestorm"  P=icebreaker        T="base"       F=stub
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32.minimal TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32.minimal TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32.minimal TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=picorv32.minimal TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   # minerva target
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=minerva          TC="vivado"    P=arty              T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=minerva          TC="vivado"    P=arty              T="net"        F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=minerva          TC="ise"       P=opsis             T="base"       F=hdmi2usb
+   - stage: "Bare-metal firmware, base targets"
+     os: osx
+     env:
+     - C=minerva          TC="ise"       P=opsis             T="net"        F=hdmi2usb
+   #--------------------------------------------
+   # Video Targets
+   #--------------------------------------------
+   - stage: "Bare-metal firmware, video targets"
+     os: osx
+     env:
+     - C=lm32             TC="vivado"    P=nexys_video       T="video"      F=hdmi2usb
+   - stage: "Bare-metal firmware, video targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=atlys             T="video"      F=hdmi2usb
+   - stage: "Bare-metal firmware, video targets"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=opsis             T="video"      F=hdmi2usb
+   #--------------------------------------------
+   # HDMI2USB Targets
+   #--------------------------------------------
+   - stage: "HDMI2USB"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=atlys             T="hdmi2usb"   F=hdmi2usb
+   - stage: "HDMI2USB"
+     os: osx
+     env:
+     - C=lm32             TC="ise"       P=opsis             T="hdmi2usb"   F=hdmi2usb
+   #--------------------------------------------
+   # MicroPython Targets
+   #--------------------------------------------
+   - stage: "Micropython"
+     os: osx
+     env:
+     - C=vexriscv         TC="ise"       P=arty              T="base"       F=micropython  A="jobs = ${JOBS}"
+   - stage: "Micropython"
+     os: osx
+     env:
+     - C=vexriscv         TC="icestorm"  P=ice40_up5k_b_evn  T="base"       F=micropython  A="jobs = ${JOBS}"
+   #--------------------------------------------
+   # Linux Targets
+   #--------------------------------------------
+   - stage: "Linux"
+     os: osx
+     env:
+     - C=mor1kx.linux     TC="vivado"    P=arty              T="net"        F=linux        A="jobs = ${JOBS}"
+   - stage: "Linux"
+     os: osx
+     env:
+     - C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux        A="jobs = ${JOBS}"
+   - stage: "Linux"
+     os: osx
+     env:
+     - C=mor1kx.linux     TC="ise"       P=atlys             T="net"        F=linux        A="jobs = ${JOBS}"
+   - stage: "Linux"
+     os: osx
+     env:
+     - C=mor1kx.linux     TC="ise"       P=opsis             T="net"        F=linux        A="jobs = ${JOBS}"
+   - stage: "Linux"
+     os: osx
+     env:
+     - C=vexriscv.linux   TC="vivado"    P=arty              T="net"        F=linux        A="jobs = ${JOBS}"
+   - stage: "Linux"
+     os: osx
+     env:
+     - C=vexriscv.linux   TC="ise"       P=opsis             T="net"        F=linux        A="jobs = ${JOBS}"
+   # FIXME: Add rocket.linux
+   #--------------------------------------------
+   # Zephyr Targets
+   #--------------------------------------------
+   - stage: "Zephyr"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
+   - stage: "Zephyr"
+     os: osx
+     env:
+     - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
+   - stage: "Zephyr"
+     os: osx
      env:
      - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
 
