@@ -154,4 +154,11 @@ if __name__ == "__main__":
     print("---------------------------------------------------")
     process_call("python -m pip install --upgrade argh")
 
+    print("           Installing OS specific packages")
+    print("---------------------------------------------------")
+    if system() == "Windows":
+        print("                 Installing make")
+        process_call("conda install m2-make")
+    else:
+        print("        No OS specific packages needed")
 
