@@ -197,7 +197,7 @@ jobs:
      os: linux
      env:
      - C=lm32.minimal     TC="ise"       P=opsis             T="net"        F=hdmi2usb
-   # OpenRISC1000    F=hdmi2usb
+   # OpenRISC1000
    - stage: "Bare-metal firmware, base targets"
      os: linux
      env:
@@ -238,7 +238,7 @@ jobs:
      os: linux
      env:
      - C=mor1kx           TC="ise"       P=pipistrello       T="base"       F=hdmi2usb
-   # VexRISCV    F=hdmi2usb
+   # VexRISCV
    - stage: "Bare-metal firmware, base targets"
      os: linux
      env:
@@ -311,7 +311,7 @@ jobs:
      os: linux
      env:
      - C=vexriscv.lite    TC="ise"       P=pano_logic_g2     T="base"       F=hdmi2usb
-   # PicoRV32     F=hdmi2usb
+   # PicoRV32
    - stage: "Bare-metal firmware, base targets"
      os: linux
      env:
@@ -356,7 +356,7 @@ jobs:
      os: linux
      env:
      - C=picorv32.minimal TC="ise"       P=opsis             T="net"        F=hdmi2usb
-   # minerva target     F=hdmi2usb
+   # minerva target
    - stage: "Bare-metal firmware, base targets"
      os: linux
      env:
@@ -374,7 +374,7 @@ jobs:
      env:
      - C=minerva          TC="ise"       P=opsis             T="net"        F=hdmi2usb
    #--------------------------------------------
-   # Video Targets     F=hdmi2usb
+   # Video Targets
    #--------------------------------------------
    - stage: "Bare-metal firmware, video targets"
      os: linux
@@ -402,7 +402,6 @@ jobs:
    #--------------------------------------------
    # MicroPython Targets
    #--------------------------------------------
-   # FIXME: Add some here
    - stage: "Micropython"
      os: linux
      env:
@@ -466,7 +465,6 @@ jobs:
    - env: C=vexriscv.lite    TC="icestorm"  P=tinyfpga_bx       T="base"       F=stub
    - env: C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux        A="jobs = ${JOBS}"
   fast_finish: true
-
 
 # notifications:
 #  email:
