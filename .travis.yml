@@ -430,9 +430,14 @@ jobs:
      os: linux
      env:
      - C=mor1kx.linux     TC="ise"       P=opsis             T="net"        F=linux        A="jobs = ${JOBS}"
-   # FIXME: Add vexriscv.linux
-   #  - C=vexriscv.linux   TC="vivado"    P=arty              T="net"        F=linux
-   #  - C=vexriscv.linux   TC="ise"       P=opsis             T="net"        F=linux
+   - stage: "Linux"
+     os: linux
+     env:
+     - C=vexriscv.linux   TC="vivado"    P=arty              T="net"        F=linux        A="jobs = ${JOBS}"
+   - stage: "Linux"
+     os: linux
+     env:
+     - C=vexriscv.linux   TC="ise"       P=opsis             T="net"        F=linux        A="jobs = ${JOBS}"
    # FIXME: Add rocket.linux
    #--------------------------------------------
    # Zephyr Targets
