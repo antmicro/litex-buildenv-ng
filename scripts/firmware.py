@@ -23,12 +23,12 @@ class FirmwareManager:
     # Linux defaults:
     LINUX = {
         'linux-mor1kx': 'https://github.com/timvideos/linux-litex.git',
-        'linux-vexriscv': 'https://github.com/timvideos/linux-litex.git',
+        'linux-vexriscv': 'https://github.com/torvalds/linux.git',
         'linux-vexriscv-buildroot': 'https://github.com/torvalds/linux.git'
     }
     LINUX_BRANCH = {
         'linux-mor1kx': 'master-litex',
-        'linux-vexriscv': 'master-litex',
+        'linux-vexriscv': 'v5.0',
         'linux-vexriscv-buildroot': 'v5.0'
     }
     LINUX_DEFCONFIG = {
@@ -332,16 +332,18 @@ class FirmwareManager:
                 self.ADDITIONAL_OPT[opt] = \
                     self.cfg._config[self.cfg._default_section][opt]
 
-        # VexRiscv Emulator TODO
         if self.cfg.cpu() == "vexriscv":
-            f = open(Path.join(self.target_dir, 'software', 'include',
-                               'generated', 'mem.h'), 'r')
+            mem_h_path = Path.join(self.target_dir, 'software', 'include',
+                                  'generated', 'mem.h')
+            f = open(mem_h_path, 'r')
             insides = f.read()
             f.close()
             emulator_ram_base = re.search('EMULATOR_RAM_BASE.*',
-                                          insides).group().split(' ')[0][0:-1]
+                                          insides).group().split(' ')[1][0:-1]
             main_ram_base = re.search('MAIN_RAM_BASE.*',
-                                      insides).group().split(' ')[0][0:-1]
+                                      insides).group().split(' ')[1][0:-1]
+
+            main_ram_base = int(emulator_ram_base, 16)
 
             emulator_dir = Path.join(os.getcwd(), 'third_party', 'litex',
                                      'litex', 'soc', 'cores', 'cpu',
@@ -349,18 +351,23 @@ class FirmwareManager:
                                      'VexRiscv', 'src', 'main', 'c',
                                      'emulator')
             emulator_mk = Path.join(emulator_dir, 'makefile')
+            emulator_build_dir = Path.join(self.target_dir, 'emulator')
 
-            os.environ['CFLAGS'] = f"-DDTB={main_ram_base + 0x01000000} -Wl,\
-                                     --defsym,__ram_origin={emulator_ram_base}"
+            os.environ['CFLAGS'] = f"-DDTB={hex(main_ram_base + 0x01000000)} -Wl,--defsym,__ram_origin={emulator_ram_base}"
             os.environ['LITEX_BASE'] = self.target_dir
             os.environ['RISCV_BIN'] = f'{self.cfg.cpu_arch()}-elf-'
+
 
             subprocess.check_call(['make', 'clean', '-C', emulator_dir,
                                    '-f', f'{emulator_mk}'])
             subprocess.check_call(['make', 'litex', '-C', emulator_dir,
                                    '-f', f'{emulator_mk}'])
 
-            # Should copy `emulator.bin` to EMULATOR_BUILD_DIR
+            if not os.path.exists(emulator_build_dir):
+                os.mkdir(emulator_build_dir)
+
+            shutil.copyfile(Path.join(emulator_dir, 'build', 'emulator.bin'),
+                            Path.join(emulator_build_dir, 'emulator.bin'))
 
         # Download data
         if not os.path.exists(self.FIRMWARE_DIR):
