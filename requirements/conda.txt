@@ -1,7 +1,5 @@
 python==3.7
 yosys
-flterm
-openocd==0.10.0
 pyserial #py:serial
 ipython #py:IPython
 
