@@ -1,2 +1,2 @@
-toolchain-riscv32-elf-newlib
-toolchain-riscv32-linux-musl
+toolchain-riscv32-elf-newlib #bin:riscv32-elf-gcc
+toolchain-riscv32-linux-musl #bin:riscv32-linux-musl-gcc
