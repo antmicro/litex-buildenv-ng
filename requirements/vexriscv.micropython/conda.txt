@@ -1,1 +1,1 @@
-toolchain-riscv32-elf-newlib
+toolchain-riscv32-elf-newlib #bin:riscv32-elf-gcc

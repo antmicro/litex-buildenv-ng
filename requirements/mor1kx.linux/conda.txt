@@ -1,2 +1,2 @@
-toolchain-or1k-elf-newlib
-toolchain-or1k-linux-musl
+toolchain-or1k-elf-newlib #bin:or1k-elf-gcc
+toolchain-or1k-linux-musl #bin:or1k-linux-musl-gcc
