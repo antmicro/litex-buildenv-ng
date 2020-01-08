@@ -1,0 +1,2 @@
+toolchain-riscv32-elf-newlib
+toolchain-riscv32-linux-musl
