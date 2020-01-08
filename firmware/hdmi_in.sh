@@ -26,8 +26,8 @@ HEXCOLOR=$2
 set -e
 
 # These must be outside the heredoc below otherwise the script won't error.
-TMPFILE_H=$(tempfile -s .h 2>/dev/null || mktemp --suffix=.h)
-TMPFILE_C=$(tempfile -s .c 2>/dev/null || mktemp --suffix=.c)
+TMPFILE_H=$(tempfile -s header 2>/dev/null || mktemp header.XXXXX)
+TMPFILE_C=$(tempfile -s cfile 2>/dev/null || mktemp cfile.XXXXX)
 
 cat $FIRMWARE_DIR/hdmi_in0.h | sed \
 	-e"s/IN0_INDEX\([^0-9]\+\)0/IN${X}_INDEX\1$X/g" \
