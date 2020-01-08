@@ -149,10 +149,14 @@ if __name__ == "__main__":
 
     fix_conda()
     process_call("conda config --system --add channels timvideos")
+    process_call("conda config --system --add channels antmicro")
     process_call("conda info")
     print("           Installing python argh package")
     print("---------------------------------------------------")
     process_call("python -m pip install --upgrade argh")
+    print("           Installing python gitpython package")
+    print("---------------------------------------------------")
+    process_call("python -m pip install --upgrade gitpython")
 
     print("           Installing OS specific packages")
     print("---------------------------------------------------")
