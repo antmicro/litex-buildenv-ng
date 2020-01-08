@@ -160,5 +160,5 @@ if __name__ == "__main__":
         print("                 Installing make")
         process_call("conda install m2-make")
     else:
-        print("        No OS specific packages needed")
+        process_call("conda install flterm openocd==0.10.0")
 
