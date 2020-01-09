@@ -6,7 +6,7 @@ from collections import OrderedDict
 from litex.build.generic_platform import *
 from litex.build.xilinx import XilinxPlatform, iMPACT
 
-from third_party.litex.litex.build.xilinx.programmer import XC3SProg
+from litex.build.xilinx.programmer import XC3SProg
 
 _io = [
     # ---------------------- Clocks ---------------------------
