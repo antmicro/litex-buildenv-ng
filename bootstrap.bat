@@ -5,7 +5,7 @@ SET SETUP_SRC_DIR=%~dp0
 SET COPY_FILES=0
 SET INITIALIZE_DIR=0
 IF NOT %TOP_DIR% == %SETUP_SRC_DIR% (
-	SET COPY_FILES=1
+    SET COPY_FILES=1
 )
 
 SET BUILD_DIR=%TOP_DIR%build
@@ -15,7 +15,7 @@ SET BUILDENV_BUILD_LOG=%BUILD_DIR%\build.log
 
 REM If we activate an enviroment CONDA_PREFIX is set. Otherwise use CONDA_DIR
 IF "%CONDA_PREFIX%" == "" (
-	SET CONDA_PREFIX=%BUILD_DIR%\conda
+    SET CONDA_PREFIX=%BUILD_DIR%\conda
 )
 SET CONDA_DIR=%CONDA_PREFIX%
 
@@ -34,7 +34,7 @@ ECHO             Initializing environment
 ECHO ---------------------------------------------------
 
 IF NOT EXIST %BUILDENV_LOCAL_TOOLS% (
-	MD %BUILDENV_LOCAL_TOOLS%
+    MD %BUILDENV_LOCAL_TOOLS%
 )
 
 SET PYTHON_PATH=
@@ -43,39 +43,42 @@ SET PYTHONNOUSERSITE=1
 SET PYTHONDONTWRITEBYTECODE=1
 
 IF "%SHELL_IS_BUILDENV_READY%" == "" (
-	SET "PATH=%BUILDENV_LOCAL_TOOLS%;%CONDA_DIR%;%PATH%"
+    SET "PATH=%BUILDENV_LOCAL_TOOLS%;%CONDA_DIR%;%PATH%"
 )
 
 SET CONDA_URI=https://repo.continuum.io/miniconda/Miniconda3-%CONDA_VERSION%-Windows-x86_64.exe
 SET CONDA_DEST=Miniconda3.exe
 
 IF NOT EXIST %CONDA_DIR% (
-	SET INITIALIZE_DIR=1
+    SET INITIALIZE_DIR=1
     CD %BUILD_DIR%
-
-	ECHO                 Downloading conda
-	ECHO ---------------------------------------------------
+    ECHO                 Downloading conda
+    ECHO ---------------------------------------------------
     powershell /Command "(New-Object System.Net.WebClient).DownloadFile('%CONDA_URI%','%CONDA_DEST%')"
     REM  /D to specify the installation path
     REM  /S to install in silent mode
-	ECHO                 Installing conda                     This may take few minutes. Please wait...
-	ECHO ---------------------------------------------------
-	START /wait "" Miniconda3.exe /S /D=%CONDA_DIR% || GOTO:EOF
-	CD ..
+    ECHO                 Installing conda                     This may take few minutes. Please wait...
+    ECHO ---------------------------------------------------
+    START /wait "" Miniconda3.exe /S /D=%CONDA_DIR% || GOTO:EOF
+    CD ..
 )
 
 ECHO                 Call conda activate
 ECHO ---------------------------------------------------
 CALL "%CONDA_DIR%\Scripts\activate"
 IF %INITIALIZE_DIR%==1 (
-	IF %COPY_FILES%==1 (
-	ECHO     Copying buildenv files to current directory
-	ECHO ---------------------------------------------------
-	REM Recursive copy excluding 'build' and '.git directories
-	ROBOCOPY /S /NJH /NJS /NC /NS /FP /NDL %SETUP_SRC_DIR% %TOP_DIR% /XD build .git
-	ECHO ---------------------------------------------------
-	)
-	python scripts/bootstrap.py
+    IF %COPY_FILES%==1 (
+        ECHO     Copying buildenv files to current directory
+        ECHO ---------------------------------------------------
+        REM Recursive copy excluding 'build' and '.git directories
+        ROBOCOPY /S /NJH /NJS /NC /NS /FP /NDL %SETUP_SRC_DIR% %TOP_DIR% /XD build .git
+        ECHO ---------------------------------------------------
+    ) ELSE (
+        echo                Updating submodules
+        echo ---------------------------------------------------
+        git submodule update --init --recursive
+    )
+    python scripts/bootstrap.py
 )
 
 ECHO  Bootstrap finished, starting litex_buildenv_ng.py

@@ -85,12 +85,12 @@ fi
 
 # Install conda for downloading packages
 if [[ ! -e $CONDA_DIR/bin/conda ]]; then
-	INITIALIZE_DIR=1
-	cd $BUILD_DIR
+    INITIALIZE_DIR=1
+    cd $BUILD_DIR
     echo "                Downloading conda"
     echo "---------------------------------------------------"
-	wget --continue https://repo.continuum.io/miniconda/$CONDA_INSTALLER
-	chmod a+x $CONDA_INSTALLER
+    wget --continue https://repo.continuum.io/miniconda/$CONDA_INSTALLER
+    chmod a+x $CONDA_INSTALLER
     echo "                 Installing conda"
     echo "---------------------------------------------------"
     # -p to specify the install location
@@ -99,18 +99,22 @@ if [[ ! -e $CONDA_DIR/bin/conda ]]; then
     ./$CONDA_INSTALLER -p $CONDA_DIR -b -f || return 
     cd ..
 fi
-pwd
+
 if [ $INITIALIZE_DIR -eq 1 ]; then
     if [ $COPY_FILES -eq 1 ]; then
         echo "    Copying buildenv files to current directory"
         echo "---------------------------------------------------"
         pushd $SCRIPT_SRC_DIR
-        find . -type f -path 'build/*' -prune -o -path '.git/*' -prune -exec cp --parents '{}' $TOP_DIR \; >>/dev/null 
-  >>/dev/null   >>/dev/null         popd
+        find . -type f -path 'build/*' -prune -o -path '.git/*' -prune -exec cp --parents '{}' $TOP_DIR \; >>/dev/null
+        popd
+    else
+        echo "                Updating submodules"
+        echo "---------------------------------------------------"
+        git submodule update --init --recursive 
+    fi
+    python3 scripts/bootstrap.py
 fi
 
-python3 scripts/bootstrap.py
-fi
 echo " Bootstrap finished, staring litex_buildenv_ng.py"
 echo "---------------------------------------------------"
 python3 scripts/litex_buildenv_ng.py $@ prepare
