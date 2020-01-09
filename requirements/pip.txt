@@ -1,4 +1,4 @@
 progressbar2 #py:progressbar
 colorama
-git+https://github.com/mithro/hexfile.git==0.1 #py:hexfile
-git+https://github.com/timvideos/HDMI2USB-mode-switch.git==0.0.1 #py:hdmi2usb.modeswitch
+git+https://github.com/mithro/hexfile.git #py:hexfile v=0.1
+git+https://github.com/timvideos/HDMI2USB-mode-switch.git #py:hdmi2usb.modeswitch v=0.0.1
