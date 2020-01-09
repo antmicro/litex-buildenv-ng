@@ -19,11 +19,15 @@ class RequirementsManager:
         dependency["type"] = m.group(5)
         dependency["verifiable_name"] = m.group(6)
         dependency["version"] = m.group(8)
-        dependency["os_name"] = m.group(10)
-        my_os = platform.system().lower()
-        if (not dependency["os_name"] is None and
-           not dependency["os_name"] == my_os):
-            print(f"Skipping: {dependency['name']}")
+        oses = m.group(10)
+        if not oses is None:
+            oses = oses.replace(' ', '')
+            dependency["os_name"] = oses.split(',')
+            my_os = platform.system().lower()
+            if not my_os in dependency["os_name"]:
+                Log.log(f"Skipping package {dependency['name']} for system {dependency['os_name']}")
+            else:
+                list.append(dependency)
         else:
             list.append(dependency)
 
@@ -184,10 +188,10 @@ class RequirementsManager:
         # (==([^ #]+))? - two equality signs followed by version - optional
         # #(bin|py) - hash and information how to check the requirement
         # (\S+) - the requirement name to look for
-        # (linux|darwin) - OS dependent package [linux] or [darwin] - optional
-        # FIXME: pip dependecies with '#' and '=', see e.g.: mimasv2/pip.txt
+        # (\[([a-z,\ ]*)\] - OS dependent package [linux], [linux, darwin]
+        # values are taken from 'platform' Python package
         self._regex = re.compile(
-            r"^([^\ ]+)(([^ #]+))?( ?#(bin|py):(\S+))?( ?v=([^\ ]+))?( ?\[(linux|darwin)\])?$")
+            r"^([^\ ]+)(([^ #]+))?( ?#(bin|py):(\S+))?( ?v=([^\ ]+))?( ?\[([a-z,\ ]*)\])?$")
 
 
 def prepare():
