@@ -1,1 +1,1 @@
-fxload
+fxload [linux]
