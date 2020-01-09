@@ -1,4 +1,4 @@
-python==3.7
+python v=3.7
 yosys
 pyserial #py:serial
 ipython #py:IPython

@@ -2,4 +2,4 @@ pyelftools #py:elftools
 packaging
 west
 pykwalify
-cmake==3.15.3 #bin:cmake
+cmake #bin:cmake v=3.15.3
