@@ -2,4 +2,7 @@ python v=3.7
 yosys
 pyserial #py:serial
 ipython #py:IPython
+flterm [linux, darwin]
+openocd [linux, darwin]
+m2-make [windows]
 
