@@ -12,7 +12,10 @@ from log import Log
 
 class Progress(git.remote.RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
-        Log.log('update(%s, %s, %s)' % (cur_count, max_count, message))
+        if len(message) == 0:
+            Log.log('update(%s, %s)' % (cur_count, max_count))
+        else:
+            Log.log('update(%s, %s, %s)' % (cur_count, max_count, message))
 
 
 class FirmwareManager:
