@@ -8,6 +8,18 @@ import sys
 from platform import system
 from glob import glob
 
+LITE_REPOS=[
+    "migen",
+    "nmigen",
+    "litex",
+    "litedram",
+    "liteeth",
+    "litepcie",
+    "litesata",
+    "litescope",
+    "litevideo"
+]
+
 
 def get_hash(filename):
     with open(filename, 'rb') as infile:
@@ -94,8 +106,8 @@ def pin_conda_package(name, version):
             outfile.write("\n".join(pinned))
 
 
-def process_call(command_string):
-    subprocess.check_call(command_string.split(' '))
+def process_call(command_string, **kwargs):
+    subprocess.check_call(command_string.split(' '), **kwargs)
 
 
 if __name__ == "__main__":
@@ -157,7 +169,16 @@ if __name__ == "__main__":
     print("           Installing python gitpython package")
     print("---------------------------------------------------")
     process_call("python -m pip install --upgrade gitpython")
-
-    print("           Installing OS specific packages")
+    
+    print("          Installing third-party packages")
     print("---------------------------------------------------")
+    
+    for repo in LITE_REPOS:
+        setup_path = os.path.join(os.getcwd(), 'third_party', repo, 'setup.py')
+        setup_dir = os.path.join(os.getcwd(), 'third_party', repo)
+        if not os.path.exists(setup_path):
+            print(f'Path: {setup_path} does not exists.\
+                    Do you run script from repo root directory?')
+        else:
+             process_call(f"python {setup_path} develop", cwd=setup_dir)
 
