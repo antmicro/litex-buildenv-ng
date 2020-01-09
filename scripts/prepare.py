@@ -16,10 +16,10 @@ class RequirementsManager:
             raise Exception(f"Requirement {dep} not in a proper format")
         dependency = {}
         dependency["name"] = m.group(1)
-        dependency["version"] = m.group(3)
         dependency["type"] = m.group(5)
         dependency["verifiable_name"] = m.group(6)
-        dependency["os_name"] = m.group(8)
+        dependency["version"] = m.group(8)
+        dependency["os_name"] = m.group(10)
         my_os = platform.system().lower()
         if (not dependency["os_name"] is None and
            not dependency["os_name"] == my_os):
@@ -187,7 +187,7 @@ class RequirementsManager:
         # (linux|darwin) - OS dependent package [linux] or [darwin] - optional
         # FIXME: pip dependecies with '#' and '=', see e.g.: mimasv2/pip.txt
         self._regex = re.compile(
-            r"^([^\ #(==)]+)(==([^ #]+))?( ?#(bin|py):(\S+))?( ?\[(linux|darwin)\])?$")
+            r"^([^\ ]+)(([^ #]+))?( ?#(bin|py):(\S+))?( ?v=([^\ ]+))?( ?\[(linux|darwin)\])?$")
 
 
 def prepare():
