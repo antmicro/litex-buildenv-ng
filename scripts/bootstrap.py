@@ -160,9 +160,4 @@ if __name__ == "__main__":
 
     print("           Installing OS specific packages")
     print("---------------------------------------------------")
-    if system() == "Windows":
-        print("                 Installing make")
-        process_call("conda install m2-make")
-    else:
-        process_call("conda install flterm openocd")
 
