@@ -14,3 +14,9 @@ echo "# Additional configs" >> default.env
 for cfg in "${ADDITIONAL_CONFIGS[@]}"; do
 	echo $cfg >> default.env
 done
+
+# Download non-standard elf.h for macOS
+if $TRAVIS_OS_NAME = 'osx'; then
+	git clone https://gist.github.com/3885346.git elfh
+	cp -a elfh/* /usr/local/include
+fi
