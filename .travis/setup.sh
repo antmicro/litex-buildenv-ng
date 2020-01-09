@@ -2,8 +2,6 @@
 
 source .travis/common.sh
 
-python3 scripts/setup_litex.py
-
 # Add non-standard configs to default.env configuration file if needed
 # Additional configs should be ';' separated
 export IFS=";"
