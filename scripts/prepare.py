@@ -4,6 +4,7 @@ import re
 import shutil
 import os
 import os.path as Path
+import platform
 from log import Log
 
 
@@ -18,7 +19,13 @@ class RequirementsManager:
         dependency["version"] = m.group(3)
         dependency["type"] = m.group(5)
         dependency["verifiable_name"] = m.group(6)
-        list.append(dependency)
+        dependency["os_name"] = m.group(8)
+        my_os = platform.system().lower()
+        if (not dependency["os_name"] is None and
+           not dependency["os_name"] == my_os):
+            print(f"Skipping: {dependency['name']}")
+        else:
+            list.append(dependency)
 
     def scan(self, target=None):
         if not target:
@@ -177,9 +184,10 @@ class RequirementsManager:
         # (==([^ #]+))? - two equality signs followed by version - optional
         # #(bin|py) - hash and information how to check the requirement
         # (\S+) - the requirement name to look for
+        # (linux|darwin) - OS dependent package [linux] or [darwin] - optional
         # FIXME: pip dependecies with '#' and '=', see e.g.: mimasv2/pip.txt
         self._regex = re.compile(
-            r"^([^\ #(==)]+)(==([^ #]+))?( ?#(bin|py):(\S+))?$")
+            r"^([^\ #(==)]+)(==([^ #]+))?( ?#(bin|py):(\S+))?( ?\[(linux|darwin)\])?$")
 
 
 def prepare():
