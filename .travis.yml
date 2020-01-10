@@ -12,7 +12,7 @@ addons:
     update: false
 
 osx_image:
-  - xcode8.3
+  - xcode11.3
 
 dist:
  - bionic
