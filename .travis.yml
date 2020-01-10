@@ -869,20 +869,20 @@ jobs:
      - C=vexriscv.linux   TC="ise"       P=opsis             T="net"        F=linux        A="jobs = ${JOBS}"
    # FIXME: Add rocket.linux
    #--------------------------------------------
-   # Zephyr Targets
+   # Zephyr Targets (SDK does not support macOS)
    #--------------------------------------------
-   - stage: "Zephyr"
-     os: osx
-     env:
-     - C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
-   - stage: "Zephyr"
-     os: osx
-     env:
-     - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
-   - stage: "Zephyr"
-     os: osx
-     env:
-     - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
+   #- stage: "Zephyr"
+   #  os: osx
+   #  env:
+   #  - C=vexriscv.lite    TC="icestorm"  P=icebreaker        T="base"       F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
+   #- stage: "Zephyr"
+   #  os: osx
+   #  env:
+   #  - C=vexriscv.lite    TC="vivado"    P=arty              T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
+   #- stage: "Zephyr"
+   #  os: osx
+   #  env:
+   #  - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
 
   allow_failures:
    - env: C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux        A="jobs = ${JOBS}"
