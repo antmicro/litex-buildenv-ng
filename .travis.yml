@@ -8,8 +8,11 @@ addons:
      - gnupg
      - util-linux
   homebrew:
+    update: true
     packages:
-    update: false
+     - findutils
+     - gnu-sed
+     - coreutils
 
 osx_image:
   - xcode11.3
