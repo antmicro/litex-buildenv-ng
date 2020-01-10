@@ -71,13 +71,14 @@ IF %INITIALIZE_DIR%==1 (
         ECHO     Copying buildenv files to current directory
         ECHO ---------------------------------------------------
         REM Recursive copy excluding 'build' and '.git directories
-        ROBOCOPY /S /NJH /NJS /NC /NS /FP /NDL %SETUP_SRC_DIR% %TOP_DIR% /XD build .git
+        ROBOCOPY /S /NJH /NJS /NC /NS /FP /NDL %SETUP_SRC_DIR% %TOP_DIR% /XD build .git\modules .git\objects third_party
+        MD %TOP_DIR%\third_party\libuip
+        ROBOCOPY /S /NJH /NJS /NC /NS /FP /NDL %SETUP_SRC_DIR%\third_party\libuip %TOP_DIR%\third_party\libuip
         ECHO ---------------------------------------------------
-    ) ELSE (
-        echo                Updating submodules
-        echo ---------------------------------------------------
-        git submodule update --init --recursive
     )
+    echo                Updating submodules
+    echo ---------------------------------------------------
+    git submodule update --init --recursive
     python scripts/bootstrap.py
 )
 
