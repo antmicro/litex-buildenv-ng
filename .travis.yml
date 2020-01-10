@@ -884,9 +884,6 @@ jobs:
    #  env:
    #  - C=vexriscv.lite    TC="ise"       P=atlys             T="net"        F=zephyr       A="zephyr-app = hello_world;jobs = ${JOBS}"
 
-  allow_failures:
-   - env: C=mor1kx.linux     TC="vivado"    P=nexys_video       T="net"        F=linux        A="jobs = ${JOBS}"
-
   fast_finish: true
 
 # notifications:
