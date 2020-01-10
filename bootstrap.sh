@@ -105,13 +105,15 @@ if [ $INITIALIZE_DIR -eq 1 ]; then
         echo "    Copying buildenv files to current directory"
         echo "---------------------------------------------------"
         pushd $SCRIPT_SRC_DIR
-        find . -type f -path 'build/*' -prune -o -path '.git/*' -prune -exec cp --parents '{}' $TOP_DIR \; >>/dev/null
+        find . -type f -not -path './build/*' -not -path '*/.git/*/objects/*' \
+            -not -path '*/.git/modules/*' -not -path './third_party/*' -exec cp --parents '{}' $TOP_DIR \;
+        mkdir -p $TOP_DIR/third_party
+        cp -r third_party/libuip $TOP_DIR/third_party/libuip
         popd
-    else
-        echo "                Updating submodules"
-        echo "---------------------------------------------------"
-        git submodule update --init --recursive 
     fi
+    echo "                Updating submodules"
+    echo "---------------------------------------------------"
+    git submodule update --init --recursive 
     python3 scripts/bootstrap.py
 fi
 
